@@ -1,0 +1,167 @@
+{% extends 'base_bs.html' %}
+{% load omfilters %}
+{% load static %}
+
+{% block titulo %}Cadastro de produto | {{ block.super }}{% endblock %}
+
+{% block conteudo %}
+    <div class="row">
+        <div class="col-12">
+            <span class="font-weight-bold">Salão & CIA</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center">
+            <span class="font-weight-bold mb-3">Cadastro de produto</span>
+            <form method="post" action="{% url 'salao.alterar.produto' %}">
+                {% csrf_token %}
+                {% if erro and descricao == 'select-produto' %}
+                    <div class="row">
+                        <div class="col-12 text-center">
+                            <span class="text-danger">Selecione um produto para poder alterá-lo</span>
+                        </div>
+                    </div>
+                {% endif %}
+                <div class="row mt-4">
+                    <div class="col-3 font-weight-bold">
+                        Operação
+                    </div>
+                    <div class="col-9 justify-content-between d-flex">
+                        <span class="mr-5"><input type="radio" name="operacao" value="cadastrar" required> Cadastrar</span>
+                        <span><input type="radio" name="operacao" value="alterar" required> Alterar</span>
+                        <span>
+                            <fieldset class="text-center">
+                                    <select id="select-produto" name="select-produto" class="form-control {% if erro and descricao == 'select-produto' %}border-danger{% endif %}" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione o produto</option>
+                                        {% for p in produtos %}
+                                            <option onclick="carregar_produto({{ p.id }})" value="{{ p.id }}">{{ p.nome|title }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </fieldset>
+                        </span>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-3 font-weight-bold">
+                        EAN
+                    </div>
+                    <div class="col-9">
+                        <input class="form-control numeric" type="text" id="ean" name="ean" required>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-3 font-weight-bold">
+                        Nome
+                    </div>
+                    <div class="col-9">
+                        <input class="form-control" type="text" id="nome" name="nome" required>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-3 font-weight-bold">
+                        Descrição
+                    </div>
+                    <div class="col-9">
+                        <input class="form-control" type="text" id="descricao" name="descricao" required>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-3 font-weight-bold">
+                        Unidade comercial
+                    </div>
+                    <div class="col-9">
+                        <fieldset class="text-center">
+                            <select id="select-unidade-comercial" required name="select-unidade-comercial" class="form-control" autocomplete="off">
+                                <option value="0" disabled selected>Selecione a unidade comercial</option>
+                                {% for p in unidades %}
+                                    <option value="{{ p.id }}">{{ p.nome|title }} ({{ p.unidade }})</option>
+                                {% endfor %}
+                            </select>
+                        </fieldset>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-3 font-weight-bold">
+                        Estoque Mínimo
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control numeric" type="text" id="estoque-minimo" name="estoque-minimo" required>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-3 font-weight-bold">
+                        Quantidade em estoque
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control numeric" type="text" id="estoque-atual" name="estoque-atual" required>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-3 font-weight-bold">
+                        Valor de revenda
+                    </div>
+                    <div class="col-6">
+                        <input class="form-control float" type="text" id="valor-revenda" name="valor-revenda" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success mt-4">
+                    Cadastrar produto
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            {% include 'parciais/_pagination.html' %}
+        </div>
+    </div>
+    <script>
+        $(document).on("input", ".numeric", function () {
+            this.value = this.value.replace(/\D/g, '');
+        });
+        $(document).on('input', ".float", function () {
+            this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+            $('#valor_troco').html(
+                (parseFloat($('#valor_recebido').val()) - parseFloat($('#valor_geral_float ').val())).toFixed(2)
+            )
+        });
+    </script>
+    <script>
+        $('.float-value').keypress(function (eve) {
+            if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $(this).caret().start == 0)) {
+                eve.preventDefault();
+            }
+
+            // this part is when left part of number is deleted and leaves a . in the leftmost position. For example, 33.25, then 33 is deleted
+            $('.filterme').keyup(function (eve) {
+                if ($(this).val().indexOf('.') == 0) {
+                    $(this).val($(this).val().substring(1));
+                }
+            });
+        });
+    </script>
+    <script>
+        function carregar_produto(id) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.carregar.produto' %}",
+                data: {
+                    'produto_id': id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    data = data.produto
+                    $('#ean').val(data.ean);
+                    $('#nome').val(data.nome);
+                    $('#descricao').val(data.descricao);
+                    $('#estoque-minimo').val(data.estoque_minimo);
+                    $('#estoque-atual').val(data.estoque_atual);
+                    $('#valor-revenda').val(data.valor_revenda);
+                    $('#select-unidade-comercial option[value="' + data.unidade_comercial_id +'"]').attr("selected", "selected");
+                },
+                error: function (data) {
+                }
+            });
+        }
+    </script>
+{% endblock %}

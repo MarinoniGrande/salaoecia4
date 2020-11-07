@@ -1,0 +1,188 @@
+<!doctype html>
+<html lang="en">
+
+<head>
+    {% include 'parciais/_head.html' %}
+    <title>{% block titulo %}{% endblock %}Salão & Cia</title>
+
+    <style>
+        .wrapper {
+            display: flex;
+            width: 100%;
+            align-items: stretch;
+        }
+
+        .wrapper {
+            display: flex;
+            align-items: stretch;
+        }
+
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+        }
+
+        #sidebar.active {
+            margin-left: -250px;
+        }
+
+        #sidebar {
+            min-width: 250px;
+            max-width: 250px;
+            min-height: 100vh;
+        }
+
+
+        a[data-toggle="collapse"] {
+            position: relative;
+        }
+
+
+        @media (max-width: 768px) {
+            #sidebar {
+                margin-left: -250px;
+            }
+
+            #sidebar.active {
+                margin-left: 0;
+            }
+        }
+
+        @import "https://fonts.googleapis.com/css?family=Poppins:300,400,500,600,700";
+
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: #fafafa;
+        }
+
+        p {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.1em;
+            font-weight: 300;
+            line-height: 1.7em;
+            color: #999;
+        }
+
+        a, a:hover, a:focus {
+            color: inherit;
+            text-decoration: none;
+            transition: all 0.3s;
+        }
+
+        #sidebar {
+            /* don't forget to add all the previously mentioned styles here too */
+            background: #17a2b8;
+            color: #fff;
+            transition: all 0.3s;
+        }
+
+        #sidebar .sidebar-header {
+            padding: 10px;
+            background: #0d8ca0;
+        }
+
+        #sidebar ul.components {
+            padding: 20px 0;
+            border-bottom: 1px solid #0d8ca0;
+        }
+
+        #sidebar ul p {
+            color: #fff;
+            padding: 10px;
+        }
+
+        #sidebar ul li a {
+            padding: 10px;
+            font-size: 1.1em;
+            display: block;
+        }
+
+        #sidebar ul li a:hover {
+            color: #0d8ca0;
+            background: #fff;
+        }
+
+        #sidebar ul li.active > a, a[aria-expanded="true"] {
+            color: #fff;
+            background: #0d8ca0;
+        }
+
+        ul ul a {
+            font-size: 0.9em !important;
+            padding-left: 30px !important;
+            background: #0d8ca0;
+        }
+    </style>
+</head>
+
+<body>
+{% include 'parciais/_nav.html' %}
+<div class="wrapper">
+    <!-- Sidebar -->
+    <nav id="sidebar">
+        <div class="sidebar-header">
+            <span>Menu</span>
+        </div>
+
+        <ul class="list-unstyled components">
+            {% if request.user.is_authenticated %}
+                {% if request.user.is_staff %}
+                    <li>
+                        <a href="{% url 'salao.gerenciar.agendamento' %}">Gerenciar Agendamentos</a>
+                    </li>
+                    <li>
+                        <a href="{% url 'salao.caixa' %}">Caixa</a>
+                    </li>
+                    <li><a class="active" href="{% url 'salao.visualizar.estoque' %}">Visualizar Estoque</a></li>
+                    <li><a href="{% url 'salao.alterar.estoque' %}">Gerenciar Estoque</a></li>
+                    <li><a href="{% url 'salao.alterar.produto' %}">Cadastrar produto</a></li>
+                    {% if request.user.is_admin %}
+                        <li><a href="{% url 'salao.cadastrar.funcionario' %}">Cadastrar funcionário</a></li>
+                        <li><a href="{% url 'salao.quadro.funcionarios' %}">Quadro de funcionários</a></li>
+                    {% endif %}
+                {% endif %}
+                <li><a href="{% url 'edit' %}">Atualizar meus dados</a></li>
+                <li><a href="{% url 'edit_password' %}">Alterar Senha</a></li>
+                <li><a href="{% url 'logout' %}">Sair ({{ request.user.username }})</a></li>
+            {% else %}
+                <li><a href="{% url 'login' %}">Entrar</a></li>
+                <li><a href="{% url 'register' %}">Criar conta</a></li>
+            {% endif %}
+            {#            <li>#}
+            {#                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>#}
+            {#                <ul class="collapse list-unstyled" id="pageSubmenu">#}
+            {#                    <li>#}
+            {#                        <a href="#">Page 1</a>#}
+            {#                    </li>#}
+            {#                    <li>#}
+            {#                        <a href="#">Page 2</a>#}
+            {#                    </li>#}
+            {#                    <li>#}
+            {#                        <a href="#">Page 3</a>#}
+            {#                    </li>#}
+            {#                </ul>#}
+            {#            </li>#}
+        </ul>
+    </nav>
+
+    <div id="content" class="container">
+        <div class="container-fluid">
+            {% include 'parciais/_messages.html' %}
+            {% block conteudo %}{% endblock %}
+        </div>
+    </div>
+</div>
+{% include 'parciais/_footer.html' %}
+
+</body>
+<script>
+    $(document).ready(function () {
+
+        $('#sidebarCollapse').on('click', function () {
+            $('#sidebar').toggleClass('active');
+        });
+
+    });
+</script>
+</html>

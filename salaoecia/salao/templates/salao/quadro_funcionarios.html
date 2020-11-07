@@ -1,0 +1,302 @@
+{% extends 'base_bs.html' %}
+{% load omfilters %}
+{% load static %}
+
+{% block titulo %}Quadro de funcionários | {{ block.super }}{% endblock %}
+
+{% block conteudo %}
+    <div class="row" id="gestao-estoque">
+        <div class="col-9">
+            <div>
+            <span class="font-weight-bold">
+                Quadro de funcionarios
+            </span>
+                <style>
+                    table {
+                        font-family: arial, sans-serif;
+                        border-collapse: collapse;
+                        width: 100%;
+                    }
+
+                    td, th {
+                        border: 1px solid #dddddd;
+                        text-align: center;
+                        padding: 8px;
+                    }
+
+                    tr:nth-child(even) {
+                        background-color: #dddddd;
+                    }
+                </style>
+                <style>
+                    table.scroll {
+                        width: 100%; /* Optional */
+                        /* border-collapse: collapse; */
+                        border-spacing: 0;
+                        border: 2px solid black;
+                    }
+
+                    table.scroll tbody,
+                    table.scroll thead {
+                        display: block;
+                    }
+
+                    thead tr th {
+                        height: 30px;
+                        line-height: 30px;
+                        /* text-align: left; */
+                    }
+
+                    table.scroll tbody {
+                        height: 300px;
+                        overflow-y: auto;
+                        overflow-x: hidden;
+                    }
+
+                    tbody {
+                        border-top: 2px solid black;
+                    }
+
+                    table tbody {
+                        height: 300px;
+                        overflow-y: scroll;
+                        display: block;
+                    }
+
+                    table thead {
+                        display: block;
+                    }
+
+                    tbody td, thead th {
+                        width: 20%; /* Optional */
+                        border-right: 1px solid black;
+                        /* white-space: nowrap; */
+                    }
+
+                    tbody td:last-child, thead th:last-child {
+                        border-right: none;
+                    }
+                </style>
+
+                <table id="tabela_agendamentos" class="scroll">
+                    <thead>
+                    <tr>
+                        <th>Matrícula</th>
+                        <th>Nome</th>
+                        <th>Cargo</th>
+                        <th>Data de início</th>
+                        <th>Tipo de contrato</th>
+                        <th>Tempo de contrato</th>
+                        <th>Contrato de trabalho</th>
+                        <th>Recibo de pagamento</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for f in funcionarios %}
+                        <tr>
+                            <td>{{ f.matricula }}</td>
+                            <td>{{ f.usuario__name }}</td>
+                            <td>{{ f.cargo__nome }}</td>
+                            <td>{{ f.data_ini|date:"d/m/Y" }}</td>
+                            <td>{{ f.contrato_trabalho__nome }}</td>
+                            <td>{{ f.tempo_contrato__nome }}</td>
+                            <td>
+                                <div class="btn btn-sm btn-info" onclick="imprimir_contrato('{{ f.usuario__cpf }}', '{{ f.usuario__address }}', '{{ f.usuario__number }}', '{{ f.usuario__neighborhood }}', '{{ f.usuario__city }}', '{{ f.usuario__state }}', '{{ f.usuario__name }}', '{{ f.cargo__nome }}')">Imprimir</div>
+                                <input type="hidden" value="{{ f.usuario__name }}" id="{{ f.matricula }}-nome">
+                            </td>
+                            <td>
+                                <div class="btn btn-sm btn-success" onclick="imprimir_recibo('{{ f.matricula }}')">Imprimir</div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+            <div class="text-center mt-3">
+                <a href="{% url 'salao.cadastrar.funcionario' %}">
+                    <div class="btn btn-success">Cadastrar funcionário</div>
+                </a>
+            </div>
+        </div>
+        <div class="col-3">
+            <div>
+                <span class="font-weight-bold">Para contrato de trabalho: </span>
+            </div>
+{#            <div class="mt-3">#}
+{#                <fieldset class="text-center">#}
+{#                    <select id="select-horario" required name="select-horario" class="form-control select-form" autocomplete="off">#}
+{#                        <option value="0" disabled selected>Selecione o horário de trabalho</option>#}
+{#                    </select>#}
+{#                </fieldset>#}
+{#            </div>#}
+{#            <div class="mt-3">#}
+{#                <fieldset class="text-center">#}
+{#                    <select id="select-forma" required name="select-forma" class="form-control select-form" autocomplete="off">#}
+{#                        <option value="0" disabled selected>Selecione a forma de pagamento</option>#}
+{#                    </select>#}
+{#                </fieldset>#}
+{#            </div>#}
+
+            <div class="mt-3">
+                Valor Hora: <input type="text" class="form-control numeric" id="valor-hora">
+            </div>
+
+            <div class="mt-5">
+                <span class="font-weight-bold">Para contrato de trabalho: </span>
+            </div>
+            <div class="mt-3">
+                Valor pago: <input type="text" class="form-control numeric" id="valor-pago">
+            </div>
+            <div class="mt-3">
+                Dia inicial: <input type="date" class="form-control" id="data-ini">
+            </div>
+            <div class="mt-3">
+                Dia final: <input type="date" class="form-control" id="data-final">
+            </div>
+            <div class="mt-3">
+                Dia pago: <input type="date" class="form-control" id="data-pago">
+            </div>
+        </div>
+    </div>
+
+    <div hidden id="contrato-trabalho">
+        <div class="font-weight-bold">
+            CONTRATO DE TRABALHO
+        </div>
+        <div>
+            CONTRATO DE TRABALHO
+        </div>
+        <div>
+            Por este instrumento particular, que entre si fazem a empresa Salão & CIA, pessoa jurídica de direito privado, inscrita no CPF sob o número <span id="cpf_empregador">111.111.111-11</span>,
+            com sede à Rua 1 de Junho, 1999, Rebouças, doravante denominada EMPREGADORA, e de outro lado <span id="nome_funcionario"></span>, inscrito(a) no CPF sob o número <span id="cpf_funcionario"></span>, residente
+            domiciliado(a) à <span id="endereco_funcionario"></span>, daqui em diante denomidado(a) EMPREGADO(a), fica justo e acordado o contrato de trabalho intermitente nos termos seguintes.
+            <br>
+            1. O(a) EMPREGADO(a) é contratado(a) na modalidade de trabalho intermitente, conforme artigo 443 e seu paragrafo terceiro, e artigo 452-A e seus parágrafos da CLT.
+            <br>
+            2. O(a) EMPREGADO(a) exercerá a função de <span id="cargo_funcionario"></span> com todas as atribuicoes que lhe são peculiares, bem como as que vierem a ser designadas através de instruções da EMPREGADORA.
+            <br>
+            3. O(a) EMPREGADO(a) receberá o salário de R$ <span id="valor-hora-span"></span> (<span id="valor-extenso"></span>) reais por hora trabalhada.
+            <br>
+            4. A EMPREGADORA convocará o(a) EMPREGADO(a) por meio de comunicação eficaz, informando a jornada.
+        </div>
+    </div>
+
+
+    <div hidden id="recibo-pagamento">
+        <div class="font-weight-bold">
+            RECIBO DE PAGAMENTO
+        </div>
+        <div>
+            Recebi de .....................................................................................................................................
+            a quantidade de R$ <span id="valor-pago-span"></span> (<span id="valor-extenso-pago"></span> reais) correspondente a <span id="data-ini-span"></span> até
+            <span id="data-fim-span"></span>
+            e para clareza firmo presente na cidade ...........................
+            no dia <span id="data-pago-span"></span>.
+            <br>
+            Assinatura............................................................
+            Nome por extenso <span id="valor-nome-extenso"></span>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            {% include 'parciais/_pagination.html' %}
+        </div>
+    </div>
+
+    <script>
+        function imprimir_contrato(cpf_funcionario, rua_funcionario, numero_funcionario, bairro_funcionario, cidade_funcionario, uf_funcionario, nome_funcionario, cargo_funcionario) {
+
+            let valor_trabalho = $('#valor-hora').val();
+            let valor_extenso = valor_trabalho.extenso();
+            $('#nome_funcionario').html(nome_funcionario);
+            $('#cpf_funcionario').html(cpf_funcionario);
+            $('#cargo_funcionario').html(cargo_funcionario);
+            $('#valor-extenso').html(valor_extenso);
+            $('#valor-hora-span').html(valor_trabalho);
+            $('#endereco_funcionario').html(rua_funcionario + ', ' + numero_funcionario + ', ' + bairro_funcionario + ' - ' + cidade_funcionario + '/' + uf_funcionario);
+            var conteudo = document.getElementById('contrato-trabalho').innerHTML,
+                tela_impressao = window.open('about:blank');
+
+            tela_impressao.document.write(conteudo);
+            tela_impressao.window.print();
+            tela_impressao.window.close();
+        }
+    </script>
+    <script>
+    function imprimir_recibo(matricula){
+        let valor_pago = $('#valor-pago').val();
+        let valor_extenso = valor_pago.extenso();
+        $('#valor-extenso-pago').html(valor_extenso);
+        $('#valor-pago-span').html(valor_pago);
+        let nome = $('#' + matricula + '-nome').val()
+        $('#data-ini-span').html($('#data-ini').val());
+        $('#data-fim-span').html($('#data-final').val());
+        $('#data-pago-span').html($('#data-pago').val());
+        $('#valor-nome-extenso').html(nome)
+        var conteudo = document.getElementById('recibo-pagamento').innerHTML,
+                tela_impressao = window.open('about:blank');
+
+            tela_impressao.document.write(conteudo);
+            tela_impressao.window.print();
+            tela_impressao.window.close();
+    }
+    </script>
+    <script>
+        // Change the selector if needed
+        var $table = $('.scroll'),
+            $bodyCells = $table.find('tbody tr:first').children(),
+            colWidth;
+
+        // Adjust the width of thead cells when window resizes
+        $(window).resize(function () {
+            // Get the tbody columns width array
+            colWidth = $bodyCells.map(function () {
+                return $(this).width();
+            }).get();
+
+            // Set the width of thead columns
+            $table.find('thead tr').children().each(function (i, v) {
+                $(v).width(colWidth[i]);
+            });
+        }).resize(); // Trigger resize handler
+    </script>
+    <script>
+        String.prototype.extenso = function (c) {
+            var ex = [
+                ["zero", "um", "dois", "três", "quatro", "cinco", "seis", "sete", "oito", "nove", "dez", "onze", "doze", "treze", "quatorze", "quinze", "dezesseis", "dezessete", "dezoito", "dezenove"],
+                ["dez", "vinte", "trinta", "quarenta", "cinqüenta", "sessenta", "setenta", "oitenta", "noventa"],
+                ["cem", "cento", "duzentos", "trezentos", "quatrocentos", "quinhentos", "seiscentos", "setecentos", "oitocentos", "novecentos"],
+                ["mil", "milhão", "bilhão", "trilhão", "quadrilhão", "quintilhão", "sextilhão", "setilhão", "octilhão", "nonilhão", "decilhão", "undecilhão", "dodecilhão", "tredecilhão", "quatrodecilhão", "quindecilhão", "sedecilhão", "septendecilhão", "octencilhão", "nonencilhão"]
+            ];
+            var a, n, v, i, n = this.replace(c ? /[^,\d]/g : /\D/g, "").split(","), e = " e ", $ = "real", d = "centavo", sl;
+            for (var f = n.length - 1, l, j = -1, r = [], s = [], t = ""; ++j <= f; s = []) {
+                j && (n[j] = (("." + n[j]) * 1).toFixed(2).slice(2));
+                if (!(a = (v = n[j]).slice((l = v.length) % 3).match(/\d{3}/g), v = l % 3 ? [v.slice(0, l % 3)] : [], v = a ? v.concat(a) : v).length) continue;
+                for (a = -1, l = v.length; ++a < l; t = "") {
+                    if (!(i = v[a] * 1)) continue;
+                    i % 100 < 20 && (t += ex[0][i % 100]) ||
+                    i % 100 + 1 && (t += ex[1][(i % 100 / 10 >> 0) - 1] + (i % 10 ? e + ex[0][i % 10] : ""));
+                    s.push((i < 100 ? t : !(i % 100) ? ex[2][i == 100 ? 0 : i / 100 >> 0] : (ex[2][i / 100 >> 0] + e + t)) +
+                        ((t = l - a - 2) > -1 ? " " + (i > 1 && t > 0 ? ex[3][t].replace("ão", "ões") : ex[3][t]) : ""));
+                }
+                a = ((sl = s.length) > 1 ? (a = s.pop(), s.join(" ") + e + a) : s.join("") || ((!j && (n[j + 1] * 1 > 0) || r.length) ? "" : ex[0][0]));
+                a && r.push(a + (c ? (" " + (v.join("") * 1 > 1 ? j ? d + "s" : (/0{6,}$/.test(n[0]) ? "de " : "") + $.replace("l", "is") : j ? d : $)) : ""));
+            }
+            return r.join(e);
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#select-horario').select2({
+                theme: "bootstrap"
+            });
+            $('#select-forma').select2({
+                theme: "bootstrap"
+            });
+        })
+
+        $(document).on("input", ".numeric", function () {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    </script>
+{% endblock %}

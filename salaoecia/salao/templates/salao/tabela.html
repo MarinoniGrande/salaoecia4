@@ -1,0 +1,18 @@
+<tr>
+    <th>ID</th>
+    <th>Nome</th>
+    <th>Serviços</th>
+    <th>Data e hora</th>
+    <th>Profissional</th>
+    <th>Selecionar</th>
+</tr>
+{% for a in agendamentos %}
+    <tr>
+    <td>{{a.id}}</td>
+    <td>{{a.cliente.name}}</td>
+    <td>{% for s in a.agendamentoservicos_set.all %}{{ s.servico.nome }} {% endfor %}</td>
+    <td>{{ a.data|date:"d/m/Y" }} às {{ a.horario.hora }}</td>
+    <td>{{ a.funcionario.name }}</td>
+        <td><button class="btn btn-warning" onclick="pegar_agendamento({{ a.id }})">Editar</button></td>
+</tr>
+{% endfor %}

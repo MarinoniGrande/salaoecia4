@@ -1,0 +1,170 @@
+{% extends 'base_bs.html' %}
+{% load omfilters %}
+{% load static %}
+
+{% block titulo %}Gestão de estoque | {{ block.super }}{% endblock %}
+
+{% block conteudo %}
+    <div class="row" id="gestao-estoque">
+        <div class="col-12">
+            <span class="font-weight-bold">
+                Gestão de estoque
+            </span>
+            <style>
+                table {
+                    font-family: arial, sans-serif;
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+
+                td, th {
+                    border: 1px solid #dddddd;
+                    text-align: center;
+                    padding: 8px;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #dddddd;
+                }
+            </style>
+            <style>
+                table.scroll {
+                    width: 100%; /* Optional */
+                    /* border-collapse: collapse; */
+                    border-spacing: 0;
+                    border: 2px solid black;
+                }
+
+                table.scroll tbody,
+                table.scroll thead {
+                    display: block;
+                }
+
+                thead tr th {
+                    height: 30px;
+                    line-height: 30px;
+                    /* text-align: left; */
+                }
+
+                table.scroll tbody {
+                    height: 300px;
+                    overflow-y: auto;
+                    overflow-x: hidden;
+                }
+
+                tbody {
+                    border-top: 2px solid black;
+                }
+
+                tbody td, thead th {
+                    width: 20%; /* Optional */
+                    border-right: 1px solid black;
+                    /* white-space: nowrap; */
+                }
+
+                tbody td:last-child, thead th:last-child {
+                    border-right: none;
+                }
+            </style>
+            <table id="tabela_agendamentos" class="scroll">
+                <thead>
+                <tr>
+                    <th>Data Ref</th>
+                    <th>EAN</th>
+                    <th>Produto</th>
+                    <th>Quantidade em estoque</th>
+                    <th>Quantidade atualizada</th>
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in produtos %}
+                    <tr>
+                        <td>{{ p.dat_insercao|date:"d/m/Y" }}</td>
+                        <td>{{ p.ean }}</td>
+                        <td>{{ p.nome }}</td>
+                        <td>{{ p.estoque_atual }}</td>
+                        <td><input type="text" class="form-control numeric" autocomplete="off" id="estoque-id-{{ p.id }}"></td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-12 text-center">
+            <div class="btn btn-info" onclick="atualizar_estoque()">
+                Atualizar Estoque
+            </div>
+            <div class="btn ml-5 mr-5 btn-warning" id="btn-imprimir">
+                Imprimir Lista
+            </div>
+            <a href="{% url 'salao.alterar.produto' %}">
+                <div class="btn btn-success">
+                    Cadastrar produto
+                </div>
+            </a>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            {% include 'parciais/_pagination.html' %}
+        </div>
+    </div>
+    <script>
+        // Change the selector if needed
+        var $table = $('table.scroll'),
+            $bodyCells = $table.find('tbody tr:first').children(),
+            colWidth;
+
+        // Adjust the width of thead cells when window resizes
+        $(window).resize(function () {
+            // Get the tbody columns width array
+            colWidth = $bodyCells.map(function () {
+                return $(this).width();
+            }).get();
+
+            // Set the width of thead columns
+            $table.find('thead tr').children().each(function (i, v) {
+                $(v).width(colWidth[i]);
+            });
+        }).resize(); // Trigger resize handler
+    </script>
+    <script>
+        document.getElementById('btn-imprimir').onclick = function () {
+            var conteudo = document.getElementById('gestao-estoque').innerHTML,
+                tela_impressao = window.open('about:blank');
+
+            tela_impressao.document.write(conteudo);
+            tela_impressao.window.print();
+            tela_impressao.window.close();
+        };
+    </script>
+    <script>
+        function atualizar_estoque() {
+            let novos_valores = {}
+            {% for p in produtos %}
+                if ($('#estoque-id-' + {{ p.id }}).val() !== '') {
+                    novos_valores['{{ p.id }}'] = $('#estoque-id-' + {{ p.id }}).val()
+                }
+            {% endfor %}
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.atualizar.estoque' %}",
+                data: {
+                    'novos_valores': JSON.stringify(novos_valores),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    document.location.reload(true);
+                },
+                error: function (data) {
+                }
+            });
+        }
+    </script>
+        <script>
+        $(document).on("input", ".numeric", function () {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    </script>
+{% endblock %}

@@ -1,0 +1,347 @@
+{% extends 'base_bs.html' %}
+{% load omfilters %}
+{% load static %}
+
+{% block titulo %}Cadastro de funcionário | {{ block.super }}{% endblock %}
+
+{% block conteudo %}
+    <div class="row">
+        <div class="col-12">
+            <span class="font-weight-bold">Salão & CIA</span>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-12 text-center">
+            <span class="font-weight-bold mb-3">Cadastro de funcionários</span>
+            <form method="post" action="{% url 'salao.cadastrar.funcionario' %}">
+                {% csrf_token %}
+
+                <div class="row">
+                    <div class="col-6 border-right">
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Username
+                            </div>
+                            <div class="col-9">
+                                {% if erro %}<span class="text-danger">{{descricao}}</span>{% endif %}
+                                <input class="form-control" type="text" id="username" name="username" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Nome
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" id="nome" name="nome" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Email
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" id="email" name="email" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                CPF
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" id="cpf" name="cpf" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Data de nascimento
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="date" id="data-nasc" name="data-nasc" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Telefone
+                            </div>
+                            <div class="col-4">
+                                <input class="form-control numeric" type="text" id="telefone" name="telefone" required>
+                            </div>
+                            <div class="col-1 font-weight-bold">
+                                Tipo
+                            </div>
+                            <div class="col-4">
+                                <fieldset class="text-center">
+                                    <select id="select-tipo" required name="select-tipo" class="form-control select-form" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione</option>
+                                        <option value="1">Celular</option>
+                                        <option value="2">Fixo</option>
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Confirmação de agendamento
+                            </div>
+                            <div class="col-9 mt-3">
+                                <span class="mr-5"><input type="radio" name="confirmacao" value="1" required> SMS</span>
+                                <span><input type="radio" name="confirmacao" value="2" required> Whatsapp</span>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Sexo
+                            </div>
+                            <div class="col-9">
+                                <fieldset class="text-center">
+                                    <select required name="select-sexo" id="select-sexo" class="form-control select-form" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione</option>
+                                        <option value="M">Masculino</option>
+                                        <option value="F">Feminino</option>
+                                        <option value="O">Outro</option>
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Matrícula
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control numeric" type="text" id="matricula" name="matricula" required>
+                            </div>
+                        </div>
+
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Cargo
+                            </div>
+                            <div class="col-9">
+                                <fieldset class="text-center">
+                                    <select required name="select-cargo" id="select-cargo" class="form-control select-form" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione</option>
+                                        {% for i in cargos %}
+                                            <option value="{{ i.id }}">{{i.nome}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Data de início
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control numeric" type="date" id="data-ini" name="data-ini" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Tipo de contrato
+                            </div>
+                            <div class="col-9">
+                                <fieldset class="text-center">
+                                    <select required name="select-tipo-contrato" id="select-tipo-contrato" class="form-control select-form" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione</option>
+                                        {% for i in tipos_contratos %}
+                                            <option value="{{ i.id }}">{{i.nome}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Tempo de contrato
+                            </div>
+                            <div class="col-9">
+                                <fieldset class="text-center">
+                                    <select required name="select-tempo" id="select-tempo" class="form-control select-form" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione</option>
+                                        {% for i in tempos_contratos %}
+                                            <option value="{{ i.id }}">{{i.nome}}</option>
+                                        {% endfor %}
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Valor
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control numeric" type="text" id="valor" name="valor" required>
+                            </div>
+                        </div>
+
+                    </div>
+                    <div class="col-6">
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                CEP
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control cep" type="text" id="cep" name="cep" onblur="buscaCep(this.value, '')" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Logradouro
+                            </div>
+                            <div class="col-9">
+                                <input class="form-control" type="text" id="rua_endereco_form" name="rua_endereco_form" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Numero
+                            </div>
+                            <div class="col-2">
+                                <input class="form-control numeric" type="text" id="numero" name="numero" required>
+                            </div>
+                            <div class="col-2 font-weight-bold">
+                                Bairro
+                            </div>
+                            <div class="col-5">
+                                <input class="form-control" type="text" id="bairro_endereco_form" name="bairro_endereco_form" required>
+                            </div>
+                        </div>
+
+                        <div class="row mt-3">
+                            <div class="col-3 font-weight-bold">
+                                Cidade
+                            </div>
+                            <div class="col-5">
+                                <input disabled class="form-control" type="text" id="cidade" name="cidade" readonly>
+                            </div>
+                            <div class="col-2 font-weight-bold">
+                                UF
+                            </div>
+                            <div class="col-2">
+                                <input disabled class="form-control" type="text" id="estado" name="estado" readonly>
+                            </div>
+                            <input hidden class="form-control" type="text" id="estado-hidden" name="estado-hidden">
+                            <input hidden class="form-control" type="text" id="cidade-hidden" name="cidade-hidden">
+                        </div>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-success mt-4">
+                    Cadastrar
+                </button>
+            </form>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            {% include 'parciais/_pagination.html' %}
+        </div>
+    </div>
+    <script>
+        $(".cep").mask('00.000-000');
+
+        $(document).on("input", ".numeric", function () {
+            this.value = this.value.replace(/\D/g, '');
+        });
+    </script>
+    <script>
+        $('.float-value').keypress(function (eve) {
+            if ((eve.which != 46 || $(this).val().indexOf('.') != -1) && (eve.which < 48 || eve.which > 57) || (eve.which == 46 && $(this).caret().start == 0)) {
+                eve.preventDefault();
+            }
+
+            // this part is when left part of number is deleted and leaves a . in the leftmost position. For example, 33.25, then 33 is deleted
+            $('.filterme').keyup(function (eve) {
+                if ($(this).val().indexOf('.') == 0) {
+                    $(this).val($(this).val().substring(1));
+                }
+            });
+        });
+    </script>
+    <script>
+        function carregar_produto(id) {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.carregar.produto' %}",
+                data: {
+                    'produto_id': id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    data = data.produto
+                    $('#ean').val(data.ean);
+                    $('#nome').val(data.nome);
+                    $('#descricao').val(data.descricao);
+                    $('#estoque-minimo').val(data.estoque_minimo);
+                    $('#estoque-atual').val(data.estoque_atual);
+                    $('#valor-revenda').val(data.valor_revenda);
+                    $('#select-unidade-comercial option[value="' + data.unidade_comercial_id + '"]').attr("selected", "selected");
+                },
+                error: function (data) {
+                }
+            });
+        }
+    </script>
+    <script>
+        $(document).ready(function () {
+            $('#select-tipo').select2({
+                theme: "bootstrap"
+            });
+            $('#select-sexo').select2({
+                theme: "bootstrap"
+            });
+            $('#select-tipo-contrato').select2({
+                theme: "bootstrap"
+            });
+            $('#select-cargo').select2({
+                theme: "bootstrap"
+            });
+            $('#select-tempo').select2({
+                theme: "bootstrap"
+            });
+        })
+    </script>
+    <script>
+        function buscaCep(value, div) {
+            var Cep = value.replace(/\D/g, '');
+            $("#rua_endereco_form" + div).val('');
+            $("#bairro_endereco_form" + div).val('');
+            $("#cidade" + div).val('');
+            $("#numero" + div).val('');
+            $("#estado" + div).val('');
+            $("#estado" + div).parent().removeClass('active');
+            $("#cidade" + div).parent().removeClass('active');
+
+            $.getJSON("https://viacep.com.br/ws/" + Cep + "/json/?callback=?", function (dados) {
+                $("#rua_endereco_form" + div).val(dados.logradouro);
+                $("#rua_endereco_form" + div).trigger('focus');
+                $("#bairro_endereco_form" + div).val(dados.bairro);
+                $("#bairro" + div).trigger('focus');
+                $("#cidade" + div).val(dados.localidade);
+                $("#estado" + div).val(dados.uf);
+                $("#cidade-hidden" + div).val(dados.localidade);
+                $("#estado-hidden" + div).val(dados.uf);
+                $("#numero" + div).focus();
+                if (dados.localidade != undefined) {
+                    $("#cidade" + div).parent().addClass('active');
+                }
+                if (dados.uf != undefined) {
+                    $("#estado" + div).parent().addClass('active');
+                }
+            })
+        };
+    </script>
+{% endblock %}

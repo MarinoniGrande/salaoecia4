@@ -1,0 +1,62 @@
+{% extends 'base_bs.html' %}
+{% load omfilters %}
+{% load static %}
+
+{% block titulo %}Gestão de estoque | {{ block.super }}{% endblock %}
+
+{% block conteudo %}
+    <div class="row">
+        <div class="col-12">
+            <span class="font-weight-bold">
+                Gestão de estoque
+            </span>
+            <style>
+                table {
+                    font-family: arial, sans-serif;
+                    border-collapse: collapse;
+                    width: 100%;
+                }
+
+                td, th {
+                    border: 1px solid #dddddd;
+                    text-align: center;
+                    padding: 8px;
+                }
+
+                tr:nth-child(even) {
+                    background-color: #dddddd;
+                }
+            </style>
+            <table id="tabela_agendamentos">
+                <thead>
+                <tr>
+                    <th>Data Ref</th>
+                    <th>EAN</th>
+                    <th>Produto</th>
+                    <th>Quantidade em estoque</th>
+                    <th>Tipo</th>
+                    <th>Valor revenda atualizado</th>
+
+                </tr>
+                </thead>
+                <tbody>
+                {% for p in produtos %}
+                    <tr>
+                        <td>{{ p.dat_insercao|date:"d/m/Y" }}</td>
+                        <td>{{ p.ean }}</td>
+                        <td>{{ p.nome }}</td>
+                        <td>{{ p.estoque_atual }}</td>
+                        <td>{{ p.tipo }}</td>
+
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col">
+            {% include 'parciais/_pagination.html' %}
+        </div>
+    </div>
+{% endblock %}

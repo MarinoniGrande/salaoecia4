@@ -1,0 +1,65 @@
+{% load omfilters %}
+
+<style>
+    .navbar {
+        padding: 0.05rem;
+    }
+</style>
+
+<nav class="navbar navbar-dark bg-primary navbar-expand-lg">
+    <div>
+        <button type="button" id="sidebarCollapse" class="btn btn-info">
+                    <i class="fas fa-align-left"></i>
+                </button>
+        <a class="navbar-brand" href="{% url 'salao.agendamento' %}">Salão & Cia</a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+    </button>
+    </div>
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+        <ul class="navbar-nav ml-auto">
+            <li class="nav-item">
+                {#                <a class="nav-link" href="{% url 'beras' %}">Beras</a>#}
+            </li>
+            {% if request.user.is_authenticated %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'logout' %}">Sair ({{ request.user.username }})</a>
+                </li>
+                {#                <li class="nav-item dropdown">#}
+                {#                    <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"#}
+                {#                       aria-haspopup="true" aria-expanded="false">#}
+                {#                        Conta#}
+                {#                    </a>#}
+                {#                    <div class="dropdown-menu" aria-labelledby="navbarDropdown">#}
+                {#                        {% if request.user.is_staff %}#}
+                {#                            <a class="dropdown-item" href="{% url 'salao.gerenciar.agendamento' %}">Gerenciar Agendamentos</a>#}
+                {#                            <a class="dropdown-item" href="{% url 'salao.visualizar.estoque' %}">Visualizar Estoque</a>#}
+                {#                            <a class="dropdown-item" href="{% url 'salao.alterar.estoque' %}">Gerenciar Estoque</a>#}
+                {#                            <a class="dropdown-item" href="{% url 'salao.alterar.produto' %}">Cadastrar produto</a>#}
+                {#                            {% if request.user.is_admin %}#}
+                {#                                <a class="dropdown-item" href="{% url 'salao.cadastrar.funcionario' %}">Cadastrar funcionário</a>#}
+                {#                                <a class="dropdown-item" href="{% url 'salao.quadro.funcionarios' %}">Quadro de funcionários</a>#}
+                {#                            {% endif %}#}
+                {#                        {% endif %}#}
+                {#                        <a class="dropdown-item" href="{% url 'edit' %}">Atualizar meus dados</a>#}
+                {#                        <a class="dropdown-item" href="{% url 'edit_password' %}">Alterar Senha</a>#}
+                {#                        <a class="dropdown-item" href="{% url 'logout' %}">Sair ({{ request.user.username }})</a>#}
+                {#                    </div>#}
+                {#                </li>#}
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'login' %}">Entrar</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'register' %}">Criar conta</a>
+                </li>
+            {% endif %}
+        </ul>
+        {#        <form class="form-inline my-2 my-lg-0" method="GET" action="#">#}
+        {#            <input name="termo" value="{{ request.GET.termo }}" class="form-control mr-sm-2" type="search"#}
+        {#                   placeholder="Busca" aria-label="Busca">#}
+        {#            <button class="btn btn-secondary my-2 my-sm-0" type="submit">Busca</button>#}
+        {#        </form>#}
+    </div>
+</nav>

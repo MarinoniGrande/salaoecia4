@@ -1,0 +1,330 @@
+{% extends 'base_bs.html' %}
+{% load omfilters %}
+{% load static %}
+
+{% block titulo %}Caixa | {{ block.super }}{% endblock %}
+
+{% block conteudo %}
+    <div class="row">
+        <div class="col-12">
+            {% if caixa.is_caixa_aberto or request.user.is_admin %}
+                <div class="row">
+                    <div class="col-12">
+                        <div class="row mb-3">
+                            <div class="col-12">
+                                <span class="font-weight-bold">Fechamento do cliente<span id="nm_cliente"></span>.</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-12">
+                        <div class="row">
+                            <div class="col-16">
+                                <fieldset class="col-xl col-lg col-md-12 col-sm-12">
+                                    <label for="clientes" class="font-weight-bold">Clientes</label>
+                                    <select id="clientes" required name="clientes" class="form-control" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione o cliente</option>
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-6 align-content-center">
+                        <style>
+                            table {
+                                font-family: arial, sans-serif;
+                                border-collapse: collapse;
+                                width: 100%;
+                            }
+
+                            td, th {
+                                border: 1px solid #dddddd;
+                                text-align: left;
+                                padding: 8px;
+                            }
+
+                            tr:nth-child(even) {
+                                background-color: #dddddd;
+                            }
+                        </style>
+                        <table id="tabela_servicos">
+                            <tr>
+                                <th>Serviço</th>
+                                <th>Valor</th>
+                            </tr>
+                        </table>
+                    </div>
+                    <div class="col-6 text-center align-content-center">
+                        <table id="tabela_produtos">
+                            <tr>
+                                <th>EAN</th>
+                                <th>Produto</th>
+                                <th>Valor</th>
+                            </tr>
+                        </table>
+                    </div>
+                </div>
+                <div class="row mt-4">
+                    <div class="col-4">
+                        <div class="row justify-content-between">
+                            <h2>Total geral:</h2>
+                            <h2>R$ <span id="valor_geral">0,00</span></h2>
+                            <input type="hidden" value="0" id="valor_geral_float">
+                        </div>
+                        <div class="row justify-content-between">
+                            <h2>Total recebido:</h2>
+                        </div>
+                        <div class="row d-flex">
+                            <input type="text" class="float form-control" id="valor_recebido" name="valor_recebido">
+                        </div>
+                        <div class="row justify-content-between">
+                            <h2>Troco:</h2>
+                            <h2>R$ <span id="valor_troco">0,00</span></h2>
+                        </div>
+                    </div>
+                    <div class="col-4">
+                        <div class="row justify-content-center">
+                            <button class="btn btn-sm btn-primary" onclick="forma_pagamento('credito')">Cartão de crédito</button>
+                            <button class="btn btn-sm btn-success ml-3" onclick="forma_pagamento('pycpay')">PICPAY</button>
+                        </div>
+                        <div class="row mt-3 justify-content-center">
+                            <button class="btn btn-sm btn-danger" onclick="forma_pagamento('dinheiro')">Dinheiro</button>
+                        </div>
+                        <div class="row mt-3 justify-content-center">
+                            <button class="btn btn-sm btn-warning" onclick="forma_pagamento('debito')">Cartão de débito</button>
+                        </div>
+                        <input type="hidden" value="" id="forma_pagamento" name="forma_pagamento">
+                    </div>
+                    <div class="col-4">
+                        <div class="row">
+                            <label for="ean_adicionado">EAN:</label>
+                            <div class="d-flex justify-content-center">
+                                <input id="ean_adicionado" name="ean_adicionado" class="form-control ml-2">
+                                <button class="btn btn-primary ml-2" onclick="adicionar_produto()">Adicionar</button>
+                            </div>
+                        </div>
+                        <div class="row justify-content-between mt-2">
+                            <label for="cpf_na_nota">Cpf do cliente:</label><input id="cpf_na_nota" name="cpf_na_nota" class="form-control numeric">
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="row mt-4 justify-content-center">
+                    {% if request.user.is_admin %}
+                        {% if caixa.is_caixa_aberto %}
+                            <div class="btn btn-danger mr-2" onclick="abrir_caixa()">Fechar caixa</div>
+                        {% else %}
+                            <div class="btn btn-primary mr-2" onclick="abrir_caixa()">Abrir caixa</div>
+                        {% endif %}
+                    {% endif %}
+                    <button class="btn btn-primary" onclick="finalizar_compra()">Finalizar compra</button>
+                </div>
+            {% else %}
+                <p>Caixa fechado! Peça para algum administrador abrir.</p>
+            {% endif %}
+
+        </div>
+    </div>
+    <script>
+        $(document).ready(function () {
+            $('#cpf_na_nota').val('')
+            $('#tabela_servicos').html('')
+            $('#valor_geral').html('0')
+            $('#valor_geral_float').val(0)
+            $('#valor_troco').html('0,00')
+            $('#nm_cliente').html('')
+            $('#tabela_servicos').html(`
+                        <tr>
+                            <th>Serviço</th>
+                            <th>Valor</th>
+                        </tr>
+                    `)
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.pegar_clientes' %}",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    for (let i = 0; i < data.clientes.length; i++) {
+                        let cpf = ''
+                        if (data.clientes[i].cpf !== null) {
+                            cpf = ' - ' + data.clientes[i].cpf
+                        }
+                        $('#clientes').append($('<option>').val(data.clientes[i].id).text(data.clientes[i].name + cpf))
+                    }
+                },
+                error: function (data) {
+                }
+            });
+        })
+
+    </script>
+    <script>
+        function abrir_caixa() {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.abrir_caixa' %}",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (data) {
+                    alert('Erro ao fechar o caixa')
+                }
+            });
+        }
+    </script>
+    <script>
+        $('#clientes').on('change', function () {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.pegar_informacoes' %}",
+                data: {
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    'cliente_id': this.value,
+                },
+                success: function (data) {
+                    let html_final = `
+                        <tr>
+                            <th>Serviço</th>
+                            <th>Valor</th>
+                        </tr>
+                    `;
+                    let valor_final = 0
+
+                    for (let i = 0; i < data.itens.length; i++) {
+                        valor_final += parseFloat(data.itens[i].servico__valor)
+                        html_final += `
+                            <tr>
+                                <td>${data.itens[i].servico__nome}</td>
+                                <td>${data.itens[i].servico__valor}</td>
+                            </tr>
+                        `
+                    }
+                    let valor_atual = parseFloat($('#valor_geral_float ').val())
+
+                    $('#valor_geral').html(valor_final + valor_atual)
+                    $('#valor_geral_float').val(valor_final + valor_atual)
+                    $('#nm_cliente').html(': ' + data.cliente.name)
+                    if (data.cliente.cpf !== null) {
+                        $('#cpf_na_nota').val(data.cliente.cpf)
+                    }
+
+                    $('#tabela_servicos').html(html_final)
+                },
+                error: function (data) {
+                    alert('Erro ao buscar os serviços do cliente!')
+                }
+            });
+        });
+    </script>
+    <script>
+        $(document).on("input", ".numeric", function () {
+            this.value = this.value.replace(/\D/g, '');
+        });
+        $(document).on('input', ".float", function () {
+            this.value = this.value.replace(/[^0-9.]/g, '').replace(/(\..*)\./g, '$1');
+            calcular_troco()
+        });
+
+        function calcular_troco() {
+            let valor_recebido = 0
+            console.log($('#valor_recebido').val())
+            if ($('#valor_recebido').val() !== '') {
+                valor_recebido = parseFloat($('#valor_recebido').val())
+            } else {
+                valor_recebido = 0
+            }
+            $('#valor_troco').html(
+                (valor_recebido - parseFloat($('#valor_geral_float ').val())).toFixed(2)
+            )
+        }
+    </script>
+    <script>
+        let produtos_adicionados = []
+
+        function adicionar_produto() {
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.pegar_produto' %}",
+                data: {
+                    'ean': $('#ean_adicionado').val(),
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    if (data.produto === null) {
+                        alert('Nenhum produto encontrado com esse ean')
+                    } else {
+                        try {
+                            $('#tabela_produtos').append(`
+                        <tr>
+                            <td>${data.produto.ean}</td><td>${data.produto.nome}</td><td>${data.produto.valor_revenda2}</td>
+                        </tr>
+                        `)
+                            let valor_total = parseFloat(data.produto.valor_revenda2) + parseFloat($('#valor_geral_float ').val())
+                            $('#valor_geral').html(valor_total)
+                            $('#valor_geral_float').val(valor_total)
+                            calcular_troco()
+                            produtos_adicionados.push(data.produto.id)
+                        } catch (e) {
+
+                        }
+                    }
+                },
+                error: function (data) {
+                    alert('Nenhum produto encontrado com esse ean')
+                }
+            });
+        }
+    </script>
+    <script>
+        function forma_pagamento(forma) {
+            $('#forma_pagamento').val(forma)
+        }
+    </script>
+    <script>
+        function finalizar_compra() {
+            let forma_pag = $('#forma_pagamento').val()
+            if (forma_pag === null || forma_pag === '') {
+                alert('Escolha uma forma de pagamento!')
+                return 0
+            }
+            let vlr_total = $('#valor_geral_float').val()
+            let vlr_recebido = $('#valor_recebido').val()
+            if (vlr_recebido === null || vlr_recebido === '') {
+                alert('Digite o valor recebido!')
+                return 0
+            }
+            let vlr_troco = $('#valor_troco').html()
+            let produtos_add = produtos_adicionados
+            let cliente_id = $('#clientes').val()
+            let cpf_na_nota = $('#cpf_na_nota').val()
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.finalizar_compra' %}",
+                data: {
+                    'forma_pag': forma_pag,
+                    'vlr_total': vlr_total,
+                    'vlr_recebido': vlr_recebido,
+                    'vlr_troco': vlr_troco,
+                    'produtos_add': produtos_add,
+                    'cliente_id': cliente_id,
+                    'cpf_na_nota': cpf_na_nota,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    location.reload();
+                },
+                error: function (data) {
+                    alert('Erro ao finalizar a compra')
+                }
+            });
+        }
+
+    </script>
+{% endblock %}
