@@ -6,240 +6,301 @@
 
 {% block conteudo %}
     <div class="row">
-        <div class="col-12">
-            <span class="font-weight-bold">Salão & CIA</span>
-        </div>
-    </div>
-    <div class="row">
         <div class="col-12 text-center">
-            <span class="font-weight-bold mb-3">Cadastro de funcionários</span>
+            <span class="font-weight-bold mb-3">Cadastro de funcionário</span>
             <form method="post" action="{% url 'salao.cadastrar.funcionario' %}">
                 {% csrf_token %}
 
                 <div class="row">
-                    <div class="col-6 border-right">
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Username
+                    <div class="col-12">
+
+
+                        <div class="row">
+                            <div class="col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0">Username</label>
+                                    </div>
+                                    <div class="col-12">
+                                        {% if erro %}<span class="text-danger">{{descricao}}</span>{% endif %}
+                                        <input class="form-control" type="text" id="username" name="username" required>
+                                    </div>
+                                </div>
+
                             </div>
-                            <div class="col-9">
-                                {% if erro %}<span class="text-danger">{{descricao}}</span>{% endif %}
-                                <input class="form-control" type="text" id="username" name="username" required>
+
+                            <div class="col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0">CPF</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input class="form-control" type="text" id="cpf" name="cpf" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Sexo</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <fieldset class="text-center">
+                                            <select required name="select-sexo" id="select-sexo" class="form-control select-form" autocomplete="off">
+                                                <option value="0" disabled selected>Selecione</option>
+                                                <option value="M">Masculino</option>
+                                                <option value="F">Feminino</option>
+                                                <option value="O">Outro</option>
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Nome
+                        <div class="row">
+                            <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0">Nome</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input class="form-control" type="text" id="nome" name="nome" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-9">
-                                <input class="form-control" type="text" id="nome" name="nome" required>
+
+                            <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0">Email</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input class="form-control" type="text" id="email" name="email" required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Email
+                        <div class="row">
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Data de nascimento</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input class="form-control" type="date" id="data-nasc" name="data-nasc" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-9">
-                                <input class="form-control" type="text" id="email" name="email" required>
-                            </div>
-                        </div>
 
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                CPF
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Telefone</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <input class="form-control numeric" type="text" id="telefone" name="telefone" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-9">
-                                <input class="form-control" type="text" id="cpf" name="cpf" required>
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Tipo</label>
+                                    </div>
+                                    <div class="col-12">
+                                        <fieldset class="text-center">
+                                            <select id="select-tipo" required name="select-tipo" class="form-control select-form" autocomplete="off">
+                                                <option value="0" disabled selected>Selecione</option>
+                                                <option value="1">Celular</option>
+                                                <option value="2">Fixo</option>
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                </div>
                             </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Data de nascimento
-                            </div>
-                            <div class="col-9">
-                                <input class="form-control" type="date" id="data-nasc" name="data-nasc" required>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Telefone
-                            </div>
-                            <div class="col-4">
-                                <input class="form-control numeric" type="text" id="telefone" name="telefone" required>
-                            </div>
-                            <div class="col-1 font-weight-bold">
-                                Tipo
-                            </div>
-                            <div class="col-4">
-                                <fieldset class="text-center">
-                                    <select id="select-tipo" required name="select-tipo" class="form-control select-form" autocomplete="off">
-                                        <option value="0" disabled selected>Selecione</option>
-                                        <option value="1">Celular</option>
-                                        <option value="2">Fixo</option>
-                                    </select>
-                                </fieldset>
-                            </div>
-                        </div>
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Confirmação de agendamento
-                            </div>
-                            <div class="col-9 mt-3">
-                                <span class="mr-5"><input type="radio" name="confirmacao" value="1" required> SMS</span>
-                                <span><input type="radio" name="confirmacao" value="2" required> Whatsapp</span>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Sexo
-                            </div>
-                            <div class="col-9">
-                                <fieldset class="text-center">
-                                    <select required name="select-sexo" id="select-sexo" class="form-control select-form" autocomplete="off">
-                                        <option value="0" disabled selected>Selecione</option>
-                                        <option value="M">Masculino</option>
-                                        <option value="F">Feminino</option>
-                                        <option value="O">Outro</option>
-                                    </select>
-                                </fieldset>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Matrícula
-                            </div>
-                            <div class="col-9">
-                                <input class="form-control numeric" type="text" id="matricula" name="matricula" required>
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Confirmação de agendamento</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <label for="sms" class="mr-5"><input type="radio" id="sms" name="confirmacao" value="1" required> SMS</label>
+                                        <label for="whatsapp"><input type="radio" id="whatsapp" name="confirmacao" value="2" required> Whatsapp</label>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
 
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Cargo
+                        <div class="row">
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Matrícula</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input class="form-control numeric" type="text" id="matricula" name="matricula" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-9">
-                                <fieldset class="text-center">
-                                    <select required name="select-cargo" id="select-cargo" class="form-control select-form" autocomplete="off">
-                                        <option value="0" disabled selected>Selecione</option>
-                                        {% for i in cargos %}
-                                            <option value="{{ i.id }}">{{i.nome}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </fieldset>
+
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Cargo</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <fieldset class="text-center">
+                                            <select required name="select-cargo" id="select-cargo" class="form-control select-form" autocomplete="off">
+                                                <option value="0" disabled selected>Selecione</option>
+                                                {% for i in cargos %}
+                                                    <option value="{{ i.id }}">{{i.nome}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Data início</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input class="form-control numeric" type="date" id="data-ini" name="data-ini" required>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Tempo de contrato</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <fieldset class="text-center">
+                                            <select required name="select-tempo" id="select-tempo" class="form-control select-form" autocomplete="off">
+                                                <option value="0" disabled selected>Selecione</option>
+                                                {% for i in tempos_contratos %}
+                                                    <option value="{{ i.id }}">{{i.nome}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Data de início
+
+                        <div class="row">
+                            <div class="col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0">Tipo de contrato</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <fieldset class="text-center">
+                                            <select required name="select-tipo-contrato" id="select-tipo-contrato" class="form-control select-form" autocomplete="off">
+                                                <option value="0" disabled selected>Selecione</option>
+                                                {% for i in tipos_contratos %}
+                                                    <option value="{{ i.id }}">{{i.nome}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </fieldset>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-9">
-                                <input class="form-control numeric" type="date" id="data-ini" name="data-ini" required>
+                            <div class="col-12 col-xl-4 col-lg-4 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Valor</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input class="form-control numeric" type="text" id="valor" name="valor" required>
+                                    </div>
+                                </div>
                             </div>
                         </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Tipo de contrato
-                            </div>
-                            <div class="col-9">
-                                <fieldset class="text-center">
-                                    <select required name="select-tipo-contrato" id="select-tipo-contrato" class="form-control select-form" autocomplete="off">
-                                        <option value="0" disabled selected>Selecione</option>
-                                        {% for i in tipos_contratos %}
-                                            <option value="{{ i.id }}">{{i.nome}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </fieldset>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Tempo de contrato
-                            </div>
-                            <div class="col-9">
-                                <fieldset class="text-center">
-                                    <select required name="select-tempo" id="select-tempo" class="form-control select-form" autocomplete="off">
-                                        <option value="0" disabled selected>Selecione</option>
-                                        {% for i in tempos_contratos %}
-                                            <option value="{{ i.id }}">{{i.nome}}</option>
-                                        {% endfor %}
-                                    </select>
-                                </fieldset>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Valor
-                            </div>
-                            <div class="col-9">
-                                <input class="form-control numeric" type="text" id="valor" name="valor" required>
-                            </div>
-                        </div>
-
+                        <hr>
                     </div>
-                    <div class="col-6">
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                CEP
+
+                    <div class="col-12">
+                        <span class="font-weight-bold mb-3">Endereço</span>
+                    </div>
+                    <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+
+                        <div class="row">
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> CEP</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input class="form-control cep" type="text" id="cep" name="cep" onchange="buscaCep(this.value, '')" required>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="col-9">
-                                <input class="form-control cep" type="text" id="cep" name="cep" onblur="buscaCep(this.value, '')" required>
+                            <div class="col-12 col-xl-9 col-lg-9 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Logradouro</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input class="form-control" type="text" id="rua_endereco_form" name="rua_endereco_form" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Número</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input class="form-control numeric" type="text" id="numero" name="numero" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Bairro</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input class="form-control" type="text" id="bairro_endereco_form" name="bairro_endereco_form" required>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> Cidade</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input disabled class="form-control" type="text" id="cidade" name="cidade" readonly>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="col-12 col-xl-3 col-lg-3 col-md-12 col-sm-12">
+                                <div class="row mt-3">
+                                    <div class="col-12 font-weight-bold text-left text-muted">
+                                        <label class="mb-0"> UF</label>
+                                    </div>
+                                    <div class="col-12 text-left">
+                                        <input disabled class="form-control" type="text" id="estado" name="estado" readonly>
+                                    </div>
+                                </div>
                             </div>
                         </div>
 
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Logradouro
-                            </div>
-                            <div class="col-9">
-                                <input class="form-control" type="text" id="rua_endereco_form" name="rua_endereco_form" required>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Numero
-                            </div>
-                            <div class="col-2">
-                                <input class="form-control numeric" type="text" id="numero" name="numero" required>
-                            </div>
-                            <div class="col-2 font-weight-bold">
-                                Bairro
-                            </div>
-                            <div class="col-5">
-                                <input class="form-control" type="text" id="bairro_endereco_form" name="bairro_endereco_form" required>
-                            </div>
-                        </div>
-
-                        <div class="row mt-3">
-                            <div class="col-3 font-weight-bold">
-                                Cidade
-                            </div>
-                            <div class="col-5">
-                                <input disabled class="form-control" type="text" id="cidade" name="cidade" readonly>
-                            </div>
-                            <div class="col-2 font-weight-bold">
-                                UF
-                            </div>
-                            <div class="col-2">
-                                <input disabled class="form-control" type="text" id="estado" name="estado" readonly>
-                            </div>
-                            <input hidden class="form-control" type="text" id="estado-hidden" name="estado-hidden">
-                            <input hidden class="form-control" type="text" id="cidade-hidden" name="cidade-hidden">
-                        </div>
+                        <input hidden class="form-control" type="text" id="estado-hidden" name="estado-hidden">
+                        <input hidden class="form-control" type="text" id="cidade-hidden" name="cidade-hidden">
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success mt-4">
+                <button type="submit" class="btn btn-primary px-5 mt-4">
                     Cadastrar
                 </button>
             </form>

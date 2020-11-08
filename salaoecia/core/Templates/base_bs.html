@@ -1,5 +1,6 @@
 <!doctype html>
 <html lang="en">
+{% load static %}
 
 <head>
     {% include 'parciais/_head.html' %}
@@ -120,7 +121,7 @@
 {% include 'parciais/_nav.html' %}
 <div class="wrapper">
     <!-- Sidebar -->
-    <nav id="sidebar">
+    <nav id="sidebar" class="active">
         <div class="sidebar-header">
             <span>Menu</span>
         </div>
@@ -166,8 +167,8 @@
         </ul>
     </nav>
 
-    <div id="content" class="container">
-        <div class="container-fluid">
+    <div id="content" class="container pt-4 pb-5">
+        <div>
             {% include 'parciais/_messages.html' %}
             {% block conteudo %}{% endblock %}
         </div>

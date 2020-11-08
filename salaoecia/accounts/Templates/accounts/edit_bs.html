@@ -8,29 +8,42 @@
     <div id="login">
         <div class="container">
             <div id="login-row" class="row justify-content-center align-items-center">
-                <div id="login-column" class="col-md-6">
-                    <div id="login-box" class="col-md-12">
+                <div id="login-column" class="col-12">
+                    <div id="login-box" class="col-12">
                         <form id="login-form" class="form" action="" method="post">
                             {% csrf_token %}
-                            <h3 class="text-center text-info">Editar dados de cadastro</h3>
-                            <div class="form-group">
-                                {{ form.non_field_errors }}
-                                {% for field in form %}
-                                    <label class="text-info">{{ field.label_tag }}</label><br>
-                                    <div>{{ field }}</div>
-                                    {{ field.errors }}
-                                {% endfor %}
+                            <h3 class="text-center mb-4 mt-5">Edição dos dados pessoais</h3>
+                            <div class="form-group mb-0">
+                                <div class="row">
+                                    {{ form.non_field_errors }}
+                                    {% for field in form %}
+                                        <div class="col-6 mt-3 mb-2">
+                                            <label class="text-left w-100 m-0 font-weight-bold text-muted">{{ field.label_tag }}</label>
+                                            <div>{{ field }}</div>
+                                            {{ field.errors }}
+                                        </div>
+                                    {% endfor %}
+                                    <div class="col-12 mt-3">
+                                        <div class="form-group">
+                                            <button type="submit" class="btn btn-primary w-100">Salvar</button>
+                                        </div>
+                                    </div>
+                                    <div class="col-12 mt-2 text-center">
+                                        <a href="{% url 'desativar' %}" class="text-danger">
+                                            Desativar conta
+                                        </a>
+                                    </div>
+                                </div>
                             </div>
-                            <a href="{% url 'desativar' %}">
-                                <div class="btn btn-danger">Desativar conta</div>
-                            </a>
-                            <div class="col">
-                                <button type="submit" class="btn btn-primary btn-block btn-lg">Salvar alterações</button>
-                            </div>
+
                         </form>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+    <script>
+        $("input, select").addClass('form-control');
+        $("label").addClass('mb-0');
+    </script>
 {% endblock %}

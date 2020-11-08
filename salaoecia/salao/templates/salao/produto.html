@@ -6,12 +6,8 @@
 
 {% block conteudo %}
     <div class="row">
-        <div class="col-12">
-            <span class="font-weight-bold">Salão & CIA</span>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-12 text-center">
+        <div class="col"></div>
+        <div class="col-12 col-sm-12 col-md-12 col-xl-8 col-lg-10 text-center">
             <span class="font-weight-bold mb-3">Cadastro de produto</span>
             <form method="post" action="{% url 'salao.alterar.produto' %}">
                 {% csrf_token %}
@@ -23,53 +19,62 @@
                     </div>
                 {% endif %}
                 <div class="row mt-4">
-                    <div class="col-3 font-weight-bold">
-                        Operação
+                    <div class="col-12 text-left d-flex justify-content-between">
+                        <label class="font-weight-bold mb-0 text-muted"> Operação </label>
+                        <div>
+                            <span class="mr-5"><input type="radio" checked="" name="operacao" value="cadastrar" required> Cadastrar</span>
+                            <span><input type="radio" name="operacao" value="alterar" required> Alterar</span>
+                        </div>
                     </div>
-                    <div class="col-9 justify-content-between d-flex">
-                        <span class="mr-5"><input type="radio" name="operacao" value="cadastrar" required> Cadastrar</span>
-                        <span><input type="radio" name="operacao" value="alterar" required> Alterar</span>
-                        <span>
-                            <fieldset class="text-center">
-                                    <select id="select-produto" name="select-produto" class="form-control {% if erro and descricao == 'select-produto' %}border-danger{% endif %}" autocomplete="off">
-                                        <option value="0" disabled selected>Selecione o produto</option>
-                                        {% for p in produtos %}
-                                            <option onclick="carregar_produto({{ p.id }})" value="{{ p.id }}">{{ p.nome|title }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </fieldset>
-                        </span>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-3 font-weight-bold">
-                        EAN
-                    </div>
-                    <div class="col-9">
-                        <input class="form-control numeric" type="text" id="ean" name="ean" required>
+                    <div class="col-12">
+                        <fieldset class="text-center">
+                            <select id="select-produto" name="select-produto" class="form-control {% if erro and descricao == 'select-produto' %}border-danger{% endif %}" autocomplete="off">
+                                <option value="0" disabled selected>Selecione o produto</option>
+                                {% for p in produtos %}
+                                    <option onclick="carregar_produto({{ p.id }})" value="{{ p.id }}">{{ p.nome|title }}</option>
+                                {% endfor %}
+                            </select>
+                        </fieldset>
                     </div>
                 </div>
-                <div class="row mt-4">
-                    <div class="col-3 font-weight-bold">
-                        Nome
+
+                <div class="row">
+                    <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="row mt-2">
+                            <div class="col-12 text-left">
+                                <label class="font-weight-bold mb-0 text-muted"> EAN </label>
+                            </div>
+                            <div class="col-12">
+                                <input class="form-control numeric" type="text" id="ean" name="ean" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-9">
-                        <input class="form-control" type="text" id="nome" name="nome" required>
+                    <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="row mt-2">
+                            <div class="col-12 text-left">
+                                <label class="font-weight-bold mb-0 text-muted"> Nome </label>
+                            </div>
+                            <div class="col-12">
+                                <input class="form-control" type="text" id="nome" name="nome" required>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row mt-4">
-                    <div class="col-3 font-weight-bold">
-                        Descrição
+
+                <div class="row mt-2">
+                    <div class="col-12 text-left">
+                        <label class="font-weight-bold mb-0 text-muted"> Descrição </label>
                     </div>
-                    <div class="col-9">
-                        <input class="form-control" type="text" id="descricao" name="descricao" required>
+                    <div class="col-12">
+                        <textarea class="form-control" type="text" id="descricao" name="descricao" required></textarea>
                     </div>
                 </div>
-                <div class="row mt-4">
-                    <div class="col-3 font-weight-bold">
-                        Unidade comercial
+
+                <div class="row mt-2">
+                    <div class="col-12 text-left">
+                        <label class="font-weight-bold mb-0 text-muted"> Unidade comercial </label>
                     </div>
-                    <div class="col-9">
+                    <div class="col-12">
                         <fieldset class="text-center">
                             <select id="select-unidade-comercial" required name="select-unidade-comercial" class="form-control" autocomplete="off">
                                 <option value="0" disabled selected>Selecione a unidade comercial</option>
@@ -80,35 +85,52 @@
                         </fieldset>
                     </div>
                 </div>
-                <div class="row mt-4">
-                    <div class="col-3 font-weight-bold">
-                        Estoque Mínimo
+
+                <div class="row">
+                    <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="row mt-2">
+                            <div class="col-12 text-left">
+                                <label class="font-weight-bold mb-0 text-muted"> Estoque Mínimo </label>
+                            </div>
+                            <div class="col-12">
+                                <input class="form-control numeric" type="text" id="estoque-minimo" name="estoque-minimo" required>
+                            </div>
+                        </div>
                     </div>
-                    <div class="col-6">
-                        <input class="form-control numeric" type="text" id="estoque-minimo" name="estoque-minimo" required>
+                    <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12">
+                        <div class="row mt-2">
+                            <div class="col-12 text-left">
+                                <label class="font-weight-bold mb-0 text-muted"> Quantidade em estoque </label>
+                            </div>
+                            <div class="col-12">
+                                <input class="form-control numeric" type="text" id="estoque-atual" name="estoque-atual" required>
+                            </div>
+                        </div>
                     </div>
                 </div>
-                <div class="row mt-4">
-                    <div class="col-3 font-weight-bold">
-                        Quantidade em estoque
+
+
+                <div class="row mt-2">
+                    <div class="col-12 text-left">
+                        <label class="font-weight-bold mb-0 text-muted"> Valor de revenda </label>
                     </div>
-                    <div class="col-6">
-                        <input class="form-control numeric" type="text" id="estoque-atual" name="estoque-atual" required>
-                    </div>
-                </div>
-                <div class="row mt-4">
-                    <div class="col-3 font-weight-bold">
-                        Valor de revenda
-                    </div>
-                    <div class="col-6">
+                    <div class="col-12">
                         <input class="form-control float" type="text" id="valor-revenda" name="valor-revenda" required>
+
                     </div>
                 </div>
-                <button type="submit" class="btn btn-success mt-4">
-                    Cadastrar produto
-                </button>
+                <div class="row">
+                    <div class="col-12">
+                        <button type="submit" class="btn btn-primary mt-4 w-100">
+                            Cadastrar produto
+                        </button>
+                    </div>
+                </div>
+
             </form>
         </div>
+        <div class="col"></div>
+
     </div>
     <div class="row mt-3">
         <div class="col">
