@@ -75,19 +75,33 @@
                         {#                            }#}
                         {#                        </style>#}
                         <table id="tabela_servicos" class="table table-striped table-bordered">
+                            <thead>
                             <tr>
-                                <th>Serviço</th>
-                                <th>Valor</th>
+                                <th>
+                                    Serviço
+                                </th>
+                                <th>
+                                    Valor
+                                </th>
                             </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
                         </table>
                     </div>
                     <div class="col-6 text-center align-content-center">
                         <table id="tabela_produtos" class="table table-striped table-bordered">
+                            <thead>
                             <tr>
                                 <th>EAN</th>
                                 <th>Produto</th>
                                 <th>Valor</th>
                             </tr>
+                            </thead>
+                            <tbody>
+
+                            </tbody>
                         </table>
                     </div>
                 </div>
@@ -170,16 +184,9 @@
     <script>
         $(document).ready(function () {
             $('#cpf_na_nota').val('');
-            $('#tabela_servicos').html('');
             $('#valor_geral').html('0');
             $('#valor_geral_float').val(0);
             $('#valor_troco').html('0,00');
-            $('#tabela_servicos').html(`
-                        <tr>
-                            <th>Serviço</th>
-                            <th>Valor</th>
-                        </tr>
-                    `);
             $.ajax({
                 type: "POST",
                 url: "{% url 'salao.pegar_clientes' %}",
@@ -228,12 +235,7 @@
                     'cliente_id': this.value,
                 },
                 success: function (data) {
-                    let html_final = `
-                        <tr>
-                            <th>Serviço</th>
-                            <th>Valor</th>
-                        </tr>
-                    `;
+                    let html_final = ``;
                     let valor_final = 0
 
                     for (let i = 0; i < data.itens.length; i++) {
@@ -253,7 +255,7 @@
                         $('#cpf_na_nota').val(data.cliente.cpf)
                     }
 
-                    $('#tabela_servicos').html(html_final)
+                    $('#tabela_servicos tbody').html(html_final)
                 },
                 error: function (data) {
                     alert('Erro ao buscar os serviços do cliente!')
@@ -299,7 +301,7 @@
                         alert('Nenhum produto encontrado com esse ean')
                     } else {
                         try {
-                            $('#tabela_produtos').append(`
+                            $('#tabela_produtos tbody').append(`
                         <tr>
                             <td>${data.produto.ean}</td><td>${data.produto.nome}</td><td>${data.produto.valor_revenda2}</td>
                         </tr>
