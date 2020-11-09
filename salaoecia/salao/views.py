@@ -4,6 +4,7 @@ from django.shortcuts import render
 
 # Create your views here.
 from django.urls import reverse
+from django.utils import timezone
 from django.views.generic.base import View
 from django.http import JsonResponse, HttpResponseRedirect
 import salaoecia.accounts.models
@@ -286,6 +287,7 @@ class CadastroProdutoView(View):
                 return render(self.request, 'salao/produto.html', context)
         else:
             produto_atualizar = salaoecia.salao.models.Produto()
+            produto_atualizar.dat_insercao = timezone.now() + timezone.timedelta(days=-3)
 
         produto_atualizar.ean = self.request.POST.get('ean')
         produto_atualizar.nome = self.request.POST.get('nome')
@@ -294,6 +296,9 @@ class CadastroProdutoView(View):
         produto_atualizar.estoque_minimo = self.request.POST.get('estoque-minimo')
         produto_atualizar.estoque_atual = self.request.POST.get('estoque-atual')
         produto_atualizar.valor_revenda2 = self.request.POST.get('valor-revenda')
+        produto_atualizar.save()
+        if operacao != 'alterar':
+            produto_atualizar.dat_insercao = timezone.now() + timezone.timedelta(hours=-3)
         produto_atualizar.save()
         return HttpResponseRedirect(reverse("salao.alterar.produto"))
 
