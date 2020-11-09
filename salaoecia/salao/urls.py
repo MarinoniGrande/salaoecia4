@@ -1,9 +1,10 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import re_path
 from salaoecia.salao.views import AgendamentoView, GerenciarAgendamentoView, AtualizarAgendamentoView, PegarAgendamentoView, CancelarAgendamentoView, GestaoEstoqueLeituraView, GestaoEstoqueView, CadastroProdutoView, \
-    AtualizarEstoqueView, CarregarProdutoView, CadastroFuncionarioView, QuadroFuncionarioView, CaixaView, PegarClientesView, PegarInformacoesView, PegarProdutoView, FinalizarCompraView, AbrirCaixaView
+    AtualizarEstoqueView, CarregarProdutoView, CadastroFuncionarioView, QuadroFuncionarioView, CaixaView, PegarClientesView, PegarInformacoesView, PegarProdutoView, FinalizarCompraView, AbrirCaixaView, DashboardView
 
 urlpatterns = [
+    re_path(r'cadastrar/agendamentos$', login_required(AgendamentoView.as_view()), name='salao.agendamento'),
     re_path(r'gerenciar/agendamentos$', login_required(GerenciarAgendamentoView.as_view()), name='salao.gerenciar.agendamento'),
     re_path(r'abrir/caixa$', login_required(AbrirCaixaView.as_view()), name='salao.abrir_caixa'),
     re_path(r'caixa$', login_required(CaixaView.as_view()), name='salao.caixa'),
@@ -21,5 +22,5 @@ urlpatterns = [
     re_path(r'cadastrar/funcionario$', login_required(CadastroFuncionarioView.as_view()), name="salao.cadastrar.funcionario"),
     re_path(r'carregar/produto$', login_required(CarregarProdutoView.as_view()), name="salao.carregar.produto"),
     re_path(r'quadro/funcionarios$', login_required(QuadroFuncionarioView.as_view()), name="salao.quadro.funcionarios"),
-    re_path(r'$', login_required(AgendamentoView.as_view()), name='salao.agendamento'),
+    re_path(r'$', login_required(DashboardView.as_view()), name='salao.dashboard'),
 ]

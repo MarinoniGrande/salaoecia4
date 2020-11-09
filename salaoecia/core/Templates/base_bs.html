@@ -128,42 +128,85 @@
 
         <ul class="list-unstyled components">
             {% if request.user.is_authenticated %}
+                <li>
+                    <a href="{% url 'salao.dashboard' %}">Início</a>
+                </li>
                 {% if request.user.is_staff %}
                     <li>
                         <a href="{% url 'salao.gerenciar.agendamento' %}">Gerenciar Agendamentos</a>
                     </li>
+                {% endif %}
+                {% if request.user.is_staff %}
                     <li>
-                        <a href="{% url 'salao.caixa' %}">Caixa</a>
+                        <a href="#caixaSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Caixa</a>
+                        <ul class="collapse list-unstyled" id="caixaSubmenu">
+                            <li>
+                                <a href="{% url 'salao.caixa' %}">Recebimentos</a>
+                            </li>
+                            <li>
+                                <a href="#">Relatórios</a>
+                            </li>
+                        </ul>
                     </li>
-                    <li><a class="active" href="{% url 'salao.visualizar.estoque' %}">Visualizar Estoque</a></li>
-                    <li><a href="{% url 'salao.alterar.estoque' %}">Gerenciar Estoque</a></li>
-                    <li><a href="{% url 'salao.alterar.produto' %}">Cadastrar produto</a></li>
+                {% endif %}
+                {% if request.user.is_staff %}
+                    <li>
+                        <a href="#estoqueSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Estoque</a>
+                        <ul class="collapse list-unstyled" id="estoqueSubmenu">
+                            <li>
+                                <a href="{% url 'salao.alterar.produto' %}">Cadastrar produto</a>
+                            </li>
+                            <li>
+                                <a class="active" href="{% url 'salao.visualizar.estoque' %}">Visualizar Estoque</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'salao.alterar.estoque' %}">Gerenciar Estoque</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endif %}
+                {% if request.user.is_staff %}
                     {% if request.user.is_admin %}
-                        <li><a href="{% url 'salao.cadastrar.funcionario' %}">Cadastrar funcionário</a></li>
-                        <li><a href="{% url 'salao.quadro.funcionarios' %}">Quadro de funcionários</a></li>
+                        <li>
+                            <a href="#funcionariosSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Funcionários</a>
+                            <ul class="collapse list-unstyled" id="funcionariosSubmenu">
+                                <li>
+                                    <a href="{% url 'salao.cadastrar.funcionario' %}">Cadastrar funcionário</a>
+                                </li>
+                                <li>
+                                    <a href="{% url 'salao.quadro.funcionarios' %}">Quadro de funcionários</a>
+                                </li>
+                                <li>
+                                    <a href="#">Relatórios</a>
+                                </li>
+                            </ul>
+                        </li>
                     {% endif %}
                 {% endif %}
-                <li><a href="{% url 'edit' %}">Atualizar meus dados</a></li>
-                <li><a href="{% url 'edit_password' %}">Alterar Senha</a></li>
-                <li><a href="{% url 'logout' %}">Sair ({{ request.user.username }})</a></li>
+                {% if request.user.is_staff %}
+                    <li>
+                        <a href="#dadosSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Meus dados</a>
+                        <ul class="collapse list-unstyled" id="dadosSubmenu">
+                            <li>
+                                <a href="{% url 'edit' %}">Atualizar meus dados</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'edit_password' %}">Alterar Senha</a>
+                            </li>
+                        </ul>
+                    </li>
+                {% endif %}
+                <li>
+                    <a href="{% url 'logout' %}">Sair ({{ request.user.username }})</a>
+                </li>
             {% else %}
-                <li><a href="{% url 'login' %}">Entrar</a></li>
-                <li><a href="{% url 'register' %}">Criar conta</a></li>
+                <li>
+                    <a href="{% url 'login' %}">Entrar</a>
+                </li>
+                <li>
+                    <a href="{% url 'register' %}">Criar conta</a>
+                </li>
             {% endif %}
-            {#            <li>#}
-            {#                <a href="#pageSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Pages</a>#}
-            {#                <ul class="collapse list-unstyled" id="pageSubmenu">#}
-            {#                    <li>#}
-            {#                        <a href="#">Page 1</a>#}
-            {#                    </li>#}
-            {#                    <li>#}
-            {#                        <a href="#">Page 2</a>#}
-            {#                    </li>#}
-            {#                    <li>#}
-            {#                        <a href="#">Page 3</a>#}
-            {#                    </li>#}
-            {#                </ul>#}
-            {#            </li>#}
         </ul>
     </nav>
 

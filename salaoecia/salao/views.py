@@ -528,3 +528,18 @@ class AbrirCaixaView(View):
             caixa.is_caixa_aberto = not caixa.is_caixa_aberto if caixa.is_caixa_aberto is not None else True
         caixa.save()
         return JsonResponse({'status': caixa.is_caixa_aberto}, safe=False)
+
+
+class DashboardView(View):
+    def get(self, *args, **kwargs):
+        if self.request.user.is_staff:
+            template_name = 'salao/dash_funcionario.html'
+            context = {
+
+            }
+        else:
+            template_name = 'salao/dash_cliente.html'
+            context = {
+
+            }
+        return render(self.request, 'salao/funcionario.html', context)
