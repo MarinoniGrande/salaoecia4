@@ -76,7 +76,7 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'name', 'birth', 'address', 'number', 'complement', 'neighborhood', 'zip_code', 'city', 'fx_salario', 'state']
+        fields = ['username', 'email', 'name', 'birth', 'address', 'number', 'complement', 'neighborhood', 'zip_code', 'city', 'state']
 
 
 class EditAccountForm(forms.ModelForm):
