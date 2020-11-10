@@ -137,9 +137,9 @@ AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
     },
-    {
-        'NAME': 'salaoecia.accounts.validators.IsActiveValidator',
-    },
+    # {
+    #     'NAME': 'salaoecia.accounts.validators.IsActiveValidator',
+    # },
     {
         'NAME': 'salaoecia.accounts.validators.MinimumLengthValidator',
         'OPTIONS': {

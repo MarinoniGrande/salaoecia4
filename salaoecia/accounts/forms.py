@@ -50,6 +50,12 @@ class RegisterForm(forms.ModelForm):
     #fx_salario = forms.CharField(label='Fx')
     #state = forms.ChoiceField(label='Estado')
 
+    def clean_birth(self):
+        data = self.data['birth']
+        if (timezone.now().replace(tzinfo=None) - salaoecia.utils.utils.anomesdiaformatado_to_datetime(anomesdiaformatado=data)).days < 365 * 13 or data is None:
+            raise forms.ValidationError('Tem que ser maior que 13 anos!')
+        return data
+
     def clean_password2(self):
         password1 = self.cleaned_data.get("password1")
         password2 = self.cleaned_data.get("password2")
