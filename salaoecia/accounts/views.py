@@ -18,7 +18,10 @@ User = get_user_model()
 
 @login_required()
 def dashboard(request):
-    template_name = 'accounts/edit_bs.html'
+    if request.user.is_staff:
+        template_name = 'salao/dash_funcionario.html'
+    else:
+        template_name = 'salao/dash_cliente.html'
     return render(request, template_name)
 
 

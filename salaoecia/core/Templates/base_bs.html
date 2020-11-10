@@ -183,7 +183,6 @@
                         </li>
                     {% endif %}
                 {% endif %}
-                {% if request.user.is_staff %}
                     <li>
                         <a href="#dadosSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Meus dados</a>
                         <ul class="collapse list-unstyled" id="dadosSubmenu">
@@ -195,7 +194,6 @@
                             </li>
                         </ul>
                     </li>
-                {% endif %}
                 <li>
                     <a href="{% url 'logout' %}">Sair ({{ request.user.username }})</a>
                 </li>
