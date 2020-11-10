@@ -1,5 +1,6 @@
 import datetime
 
+from django.db.models import Count
 from django.shortcuts import render
 
 # Create your views here.
@@ -287,7 +288,7 @@ class CadastroProdutoView(View):
                 return render(self.request, 'salao/produto.html', context)
         else:
             produto_atualizar = salaoecia.salao.models.Produto()
-            produto_atualizar.dat_insercao = timezone.now() + timezone.timedelta(days=-3)
+            produto_atualizar.dat_insercao = timezone.now() + timezone.timedelta(hours=-3)
 
         if operacao == 'desativar':
             produto_atualizar.status = False
@@ -539,12 +540,37 @@ class DashboardView(View):
     def get(self, *args, **kwargs):
         if self.request.user.is_staff:
             template_name = 'salao/dash_funcionario.html'
-            context = {
-
+            informacoes = {
+                'agendamentos_hoje': list(salao.models.Agendamento.objects.all().filter(data=timezone.now().date()).order_by('id')),
+                'agendamentos_mes': list(salao.models.Agendamento.objects.all().filter(data__gte=timezone.now().date().replace(day=1)).order_by('id')),
+                'agendamentos_prestador': list(salao.models.Agendamento.objects.values('funcionario__name').filter(is_pago=True).annotate(qtd=Count('funcionario__name')).order_by('-qtd')),
+                'agendamentos_sexo': list(salao.models.Agendamento.objects.values('cliente__sexo').filter(is_pago=True).annotate(qtd=Count('cliente__sexo')).order_by('-qtd')),
+                'agendamentos_faixa_etaria': list(salao.models.Agendamento.objects.values('cliente__birth').filter(is_pago=True).annotate(qtd=Count('cliente__birth')).order_by('-qtd')),
+                'agendamentos_prestador_futuros': list(salao.models.Agendamento.objects.values('funcionario__name').filter(data__gte=timezone.now().date()).annotate(qtd=Count('funcionario__name')).order_by('-qtd')),
+                'clientes_previstos': list(salao.models.Agendamento.objects.values('cliente__name').filter(data__gte=timezone.now().date()).order_by('cliente__name').distinct()),
             }
         else:
             template_name = 'salao/dash_cliente.html'
-            context = {
-
+            informacoes = {
+                'ultimo_servico': salao.models.AgendamentoServicos.objects.values('servico__nome').filter(agendamento__cliente_id=self.request.user).order_by('-agendamento__id').first(),
+                'agendamentos_futuros': list(salao.models.Agendamento.objects.values().filter(cliente_id=self.request.user, is_pago=False, data__gte=timezone.now().date()).order_by('id'))
             }
-        return render(self.request, 'salao/funcionario.html', context)
+
+        context = {
+            'ultimo_login': self.request.user.last_login + timezone.timedelta(hours=-3),
+            **informacoes
+        }
+        return render(self.request, template_name, context=context)
+
+    def post(self, *args, **kwargs):
+        dias = self.request.POST.get('dias')
+        if dias is None:
+            dias = 7
+        else:
+            dias = int(dias)
+        data = timezone.now() + timezone.timedelta(days=-dias)
+        quantidade_agendamentos = salao.models.AgendamentoServicos.objects.values('servico__nome').filter(agendamento__cliente_id=self.request.user, agendamento__data__gte=data).count()
+
+        ultimos_servicos = list(salao.models.AgendamentoServicos.objects.values('servico__nome').filter(agendamento__cliente_id=self.request.user, agendamento__data__gte=data).annotate(Count('servico__nome')))
+
+        return JsonResponse({'qtd_agendamentos': quantidade_agendamentos, 'ultimos_servicos': ultimos_servicos}, safe=False)

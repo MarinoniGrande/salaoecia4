@@ -22,7 +22,10 @@ def dashboard(request):
         template_name = 'salao/dash_funcionario.html'
     else:
         template_name = 'salao/dash_cliente.html'
-    return render(request, template_name)
+    context = {
+        'ultimo_login': request.user.last_login + timezone.timedelta(hours=-3)
+    }
+    return render(request, template_name, context=context)
 
 
 @login_required()

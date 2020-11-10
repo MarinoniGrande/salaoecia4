@@ -116,7 +116,7 @@
                 eventLimit: true,
                 select: function (start, end, allDay) {
                     $('#data-agendamento').html($.fullCalendar.formatDate(start, "DD/MM/Y"));
-                    $('#data-agendamento-input').val($.fullCalendar.formatDate(end, "DD/MM/Y"));
+                    $('#data-agendamento-input').val($.fullCalendar.formatDate(start, "DD/MM/Y"));
                     {#var title = prompt("Enter Event Title");#}
                 },
                 eventResize: function (event) {

@@ -135,6 +135,10 @@
                     <li>
                         <a href="{% url 'salao.gerenciar.agendamento' %}">Gerenciar Agendamentos</a>
                     </li>
+                {% else %}
+                    <li>
+                        <a href="{% url 'salao.agendamento' %}">Cadastrar Agendamentos</a>
+                    </li>
                 {% endif %}
                 {% if request.user.is_staff %}
                     <li>

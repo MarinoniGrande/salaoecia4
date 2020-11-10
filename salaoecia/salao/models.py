@@ -33,6 +33,7 @@ class Agendamento(models.Model):
     servicos = models.ManyToManyField(through_fields=('agendamento', 'servico'), through='AgendamentoServicos', to='Servicos')
     funcionario_cancelou = models.ForeignKey(salaoecia.accounts.models.User, on_delete=models.DO_NOTHING, null=True, related_name='funcionario_cancelou')
     motivo = models.ForeignKey('MotivosAgendamento', on_delete=models.DO_NOTHING, null=True)
+    dat_edicao = models.DateTimeField(null=True, auto_now=True)
 
 
 class AgendamentoServicos(models.Model):
