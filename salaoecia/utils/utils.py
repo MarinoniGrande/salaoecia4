@@ -1,3 +1,5 @@
+from datetime import  datetime
+
 def formata_preco(val):
     return f'R$ {val:.2f}'.replace('.', ',')
 
@@ -17,3 +19,8 @@ def cart_totals(carrinho):
         ]
     )
 
+def anomesdiaformatado_to_datetime(anomesdiaformatado):
+    try:
+        return datetime.strptime(anomesdiaformatado, '%Y-%m-%d')
+    except:
+        return None

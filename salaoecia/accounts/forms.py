@@ -1,9 +1,11 @@
 from django import forms
 from django.contrib.auth import get_user_model
+from django.utils import timezone
+
 from .models import PasswordReset
 from salaoecia.core.utils import generate_hash_key
 from salaoecia.core.mail import send_mail_template
-
+import salaoecia.utils.utils
 
 User = get_user_model()
 
@@ -58,7 +60,7 @@ class RegisterForm(forms.ModelForm):
     def save(self, commit=True):
         user = super(RegisterForm, self).save(commit=False)
         user.name = self.cleaned_data.get("name")
-        user.set_password(self.cleaned_data['password1'])
+        user.set_password(self.data['password1'])
         user.birth = self.cleaned_data.get("birth")
         user.address = self.cleaned_data.get("address")
         user.number = self.cleaned_data.get("number")
