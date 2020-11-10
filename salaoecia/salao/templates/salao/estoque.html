@@ -74,6 +74,7 @@
                     <th>Produto</th>
                     <th>Quantidade em estoque</th>
                     <th>Quantidade atualizada</th>
+                    <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
@@ -84,6 +85,7 @@
                         <td>{{ p.nome }}</td>
                         <td>{{ p.estoque_atual }}</td>
                         <td><input type="text" class="form-control numeric" autocomplete="off" id="estoque-id-{{ p.id }}"></td>
+                        <td>{{ p.status }}</td>
                     </tr>
                 {% endfor %}
                 </tbody>

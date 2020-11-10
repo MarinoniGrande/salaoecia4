@@ -238,7 +238,7 @@ class GestaoEstoqueView(View):
         if not self.request.user.is_staff:
             return HttpResponseRedirect(reverse("salao.agendamento"))
 
-        produtos = salaoecia.salao.models.Produto.objects.values('estoque_atual', 'ean', 'dat_insercao', 'nome', 'id').filter(status=True).order_by('nome')
+        produtos = salaoecia.salao.models.Produto.objects.values('estoque_atual', 'ean', 'dat_insercao', 'nome', 'id', 'status').order_by('nome')
         context = {
             'produtos': produtos
         }
@@ -249,7 +249,7 @@ class GestaoEstoqueLeituraView(View):
     def get(self, *args, **kwargs):
         if not self.request.user.is_staff:
             return HttpResponseRedirect(reverse("salao.agendamento"))
-        produtos = salaoecia.salao.models.Produto.objects.values('estoque_atual', 'ean', 'dat_insercao', 'nome', 'tipo', 'valor_revenda').filter(status=True).order_by('nome')
+        produtos = salaoecia.salao.models.Produto.objects.values('estoque_atual', 'ean', 'dat_insercao', 'nome', 'tipo', 'valor_revenda').order_by('nome')
         context = {
             'produtos': produtos
         }
@@ -272,7 +272,7 @@ class CadastroProdutoView(View):
         if not self.request.user.is_staff:
             return HttpResponseRedirect(reverse("salao.agendamento"))
         operacao = self.request.POST.get('operacao')
-        if operacao == 'alterar':
+        if operacao == 'alterar' or operacao == 'desativar':
             id_produto = self.request.POST.get('select-produto')
             produto_atualizar = salaoecia.salao.models.Produto.objects.all().filter(id=id_produto).first()
             if produto_atualizar is None:
@@ -288,6 +288,11 @@ class CadastroProdutoView(View):
         else:
             produto_atualizar = salaoecia.salao.models.Produto()
             produto_atualizar.dat_insercao = timezone.now() + timezone.timedelta(days=-3)
+
+        if operacao == 'desativar':
+            produto_atualizar.status = False
+            produto_atualizar.save()
+            return HttpResponseRedirect(reverse("salao.alterar.produto"))
 
         produto_atualizar.ean = self.request.POST.get('ean')
         produto_atualizar.nome = self.request.POST.get('nome')
