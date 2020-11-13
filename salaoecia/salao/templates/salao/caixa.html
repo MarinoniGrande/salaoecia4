@@ -46,7 +46,7 @@
                                     <div class="input-group-prepend">
                                         <div class="input-group-text" id="btnGroupAddon">EAN</div>
                                     </div>
-                                    <input id="ean_adicionado" name="ean_adicionado" class="form-control">
+                                    <input id="ean_adicionado" name="ean_adicionado" onkeypress="if(event.keyCode === 13){adicionar_produto()}" class="form-control">
                                     <div class="input-group-append">
                                         <button class="btn btn-primary" onclick="adicionar_produto()">Adicionar</button>
                                     </div>
@@ -97,6 +97,7 @@
                                 <th>EAN</th>
                                 <th>Produto</th>
                                 <th>Valor</th>
+                                <th>Ações</th>
                             </tr>
                             </thead>
                             <tbody>
@@ -136,7 +137,7 @@
                                         <h2>Total:</h2>
                                     </div>
                                     <div class="col">
-                                        <h2>R$ <span id="valor_geral">0,00</span></h2>
+                                        <h2>R$ <span id="valor_geral">0.00</span></h2>
                                         <input type="hidden" value="0" id="valor_geral_float">
                                     </div>
                                 </div>
@@ -157,7 +158,7 @@
                                         <h2>Troco:</h2>
                                     </div>
                                     <div class="col-12 col-xl-3 col-lg-3 col-sm-12 col-md-12">
-                                        <h2>R$ <span id="valor_troco">0,00</span></h2>
+                                        <h2>R$ <span id="valor_troco">0.00</span></h2>
                                     </div>
                                 </div>
                             </div>
@@ -184,9 +185,9 @@
     <script>
         $(document).ready(function () {
             $('#cpf_na_nota').val('');
-            $('#valor_geral').html('0');
+            $('#valor_geral').html('0.00');
             $('#valor_geral_float').val(0);
-            $('#valor_troco').html('0,00');
+            $('#valor_troco').html('0.00');
             $.ajax({
                 type: "POST",
                 url: "{% url 'salao.pegar_clientes' %}",
@@ -239,7 +240,7 @@
                     let valor_final = 0
 
                     for (let i = 0; i < data.itens.length; i++) {
-                        valor_final += parseFloat(data.itens[i].servico__valor)
+                        valor_final += parseFloat(data.itens[i].servico__valor);
                         html_final += `
                             <tr>
                                 <td>${data.itens[i].servico__nome}</td>
@@ -247,7 +248,7 @@
                             </tr>
                         `
                     }
-                    let valor_atual = parseFloat($('#valor_geral_float ').val())
+                    let valor_atual = parseFloat($('#valor_geral_float ').val());
 
                     $('#valor_geral').html(valor_final + valor_atual)
                     $('#valor_geral_float').val(valor_final + valor_atual)
@@ -273,54 +274,69 @@
         });
 
         function calcular_troco() {
-            let valor_recebido = 0
-            console.log($('#valor_recebido').val())
-            if ($('#valor_recebido').val() !== '') {
+            let valor_recebido = 0;
+            if ($('#valor_recebido').val()) {
                 valor_recebido = parseFloat($('#valor_recebido').val())
             } else {
                 valor_recebido = 0
             }
-            $('#valor_troco').html(
-                (valor_recebido - parseFloat($('#valor_geral_float ').val())).toFixed(2)
-            )
+            let valor = (valor_recebido - parseFloat($('#valor_geral_float ').val())).toFixed(2) && (valor_recebido - parseFloat($('#valor_geral_float ').val())).toFixed(2) < 0 ? 0 : (valor_recebido - parseFloat($('#valor_geral_float ').val())).toFixed(2);
+                $('#valor_troco').html(valor);
         }
     </script>
     <script>
-        let produtos_adicionados = []
+        let produtos_adicionados = [];
 
         function adicionar_produto() {
-            $.ajax({
-                type: "POST",
-                url: "{% url 'salao.pegar_produto' %}",
-                data: {
-                    'ean': $('#ean_adicionado').val(),
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                },
-                success: function (data) {
-                    if (data.produto === null) {
-                        alert('Nenhum produto encontrado com esse ean')
-                    } else {
-                        try {
-                            $('#tabela_produtos tbody').append(`
-                        <tr>
-                            <td>${data.produto.ean}</td><td>${data.produto.nome}</td><td>${data.produto.valor_revenda2}</td>
-                        </tr>
-                        `)
-                            let valor_total = parseFloat(data.produto.valor_revenda2) + parseFloat($('#valor_geral_float ').val())
-                            $('#valor_geral').html(valor_total)
-                            $('#valor_geral_float').val(valor_total)
-                            calcular_troco()
-                            produtos_adicionados.push(data.produto.id)
-                        } catch (e) {
+            if($('#ean_adicionado').val())
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'salao.pegar_produto' %}",
+                    data: {
+                        'ean': $('#ean_adicionado').val(),
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    },
+                    success: function (data) {
+                        if (data.produto === null) {
+                            alert('Nenhum produto encontrado com esse ean')
+                        } else {
+                            try {
+                                $('#tabela_produtos tbody').append(`
+                                    <tr data-id="${data.produto.id}">
+                                        <td>${data.produto.ean}</td>
+                                        <td>${data.produto.nome}</td>
+                                        <td>${data.produto.valor_revenda2}</td>
+                                        <td><button class="btn btn-danger" onclick="remover_produto(this)">Remover</button></td>
+                                    </tr>
+                                `);
 
+                                let valor_total = parseFloat(data.produto.valor_revenda2) + parseFloat($('#valor_geral_float ').val());
+                                $('#valor_geral').html(valor_total.toFixed(2));
+                                $('#valor_geral_float').val(valor_total);
+                                calcular_troco();
+                                produtos_adicionados.push(data.produto.id);
+                            } catch (e) {
+
+                            }
                         }
+                    },
+                    error: function (data) {
+                        alert('Nenhum produto encontrado com esse ean')
                     }
-                },
-                error: function (data) {
-                    alert('Nenhum produto encontrado com esse ean')
-                }
-            });
+                });
         }
+
+        function remover_produto(_this) {
+            _this = $(_this);
+            let valor = _this.parent().parent().children()[2];
+            let valor_total = parseFloat(valor) - parseFloat($('#valor_geral_float ').val()) ? parseFloat(valor) - parseFloat($('#valor_geral_float ').val()) : 0;
+            $('#valor_geral').html(valor_total.toFixed(2));
+            $('#valor_geral_float').val(valor_total);
+            produtos_adicionados.splice(produtos_adicionados.indexOf(parseFloat(_this.parent().parent().attr('data-id'))), 1);
+            calcular_troco();
+            _this.parent().parent().remove();
+        }
+
     </script>
     <script>
         function forma_pagamento(forma) {
@@ -333,21 +349,21 @@
     </script>
     <script>
         function finalizar_compra() {
-            let forma_pag = $('#forma_pagamento').val()
+            let forma_pag = $('#forma_pagamento').val();
             if (forma_pag === null || forma_pag === '') {
-                alert('Escolha uma forma de pagamento!')
+                alert('Escolha uma forma de pagamento!');
                 return 0
             }
-            let vlr_total = $('#valor_geral_float').val()
-            let vlr_recebido = $('#valor_recebido').val()
+            let vlr_total = $('#valor_geral_float').val();
+            let vlr_recebido = $('#valor_recebido').val();
             if (vlr_recebido === null || vlr_recebido === '') {
-                alert('Digite o valor recebido!')
+                alert('Digite o valor recebido!');
                 return 0
             }
-            let vlr_troco = $('#valor_troco').html()
-            let produtos_add = produtos_adicionados
-            let cliente_id = $('#clientes').val()
-            let cpf_na_nota = $('#cpf_na_nota').val()
+            let vlr_troco = $('#valor_troco').html();
+            let produtos_add = produtos_adicionados;
+            let cliente_id = $('#clientes').val();
+            let cpf_na_nota = $('#cpf_na_nota').val();
             $.ajax({
                 type: "POST",
                 url: "{% url 'salao.finalizar_compra' %}",
