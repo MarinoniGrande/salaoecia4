@@ -11,9 +11,9 @@
                 <div class="col-12">
                     <div class="row mb-3">
                         <div class="col-12">
-                            <p class="font-weight-bold">Bem vindo, {{ request.user.name}}, seu último acesso foi em {{ ultimo_login|date:"d/m/Y" }}</p>
-                            <p class="font-weight-bold">Ultimo serviço: {{ ultimo_servico.servico__nome }}</p>
-                            <p class="font-weight-bold">Agendamentos futuros:</p>
+                            <p class="text-body">Bem vindo, <span class="font-weight-bold">{{ request.user.name|title }}</span>, seu último acesso foi em <span class="font-weight-semibold">{{ ultimo_login|date:"d/m/Y" }}</span></p>
+                            <p class="text-body"><span  class="font-weight-bold">Ultimo serviço:</span> <span>{{ ultimo_servico.servico__nome }}</span></p>
+                            <p class="font-weight-bold text-body mb-1">Agendamentos futuros:</p>
                             <table id="tabela_agendamentos" class="table table-striped table-bordered">
                                 <thead>
                                 <tr>
