@@ -42,5 +42,23 @@
     <script>
         $("input, select").addClass('form-control');
         $("label").addClass('mb-0');
+        $('#cpf').mask("000.000.000-00");
+
+        $('#id_zip_code').mask('00.000-000');
+        $('#id_zip_code').on('change', function(ev){
+            buscaCep(ev.target.value, '');
+        });
+
+
+        function buscaCep(value) {
+            var Cep = value.replace(/\D/g, '');
+            $.getJSON("https://viacep.com.br/ws/" + Cep + "/json/?callback=?", function (dados) {
+                $("#id_address").val(dados.logradouro);
+                $("#id_neighborhood").val(dados.bairro);
+                $("#id_city").val(dados.localidade);
+                $("#id_state").val(dados.uf);
+                $("#id_number").focus();
+            })
+        }
     </script>
 {% endblock %}

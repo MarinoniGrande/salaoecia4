@@ -7,143 +7,15 @@
 {% block conteudo %}
     <div class="row" id="gestao-estoque">
         <div class="col-12">
-            <div class="row">
-                <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12 mt-4">
-                    <span class="font-weight-bold">Para contrato de trabalho: </span>
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="mt-1">
-                                Valor Hora: <input type="text" class="form-control numeric" id="valor-hora">
-                            </div>
-                        </div>
-                    </div>
-
-                </div>
-                <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12 mt-4">
-
-                    <div>
-                        <span class="font-weight-bold">Para contrato de trabalho: </span>
-                    </div>
-
-                    <div class="row">
-                        <div class="col-6">
-                            <div class="mt-1">
-                                Valor pago: <input type="text" class="form-control numeric" id="valor-pago">
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="mt-1">
-                                Dia inicial: <input type="date" class="form-control" id="data-ini">
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="mt-1">
-                                Dia final: <input type="date" class="form-control" id="data-final">
-                            </div>
-                        </div>
-                        <div class="col-6">
-                            <div class="mt-1">
-                                Dia pago: <input type="date" class="form-control" id="data-pago">
-                            </div>
-                        </div>
-                    </div>
-
-
-
-                </div>
-            </div>
-
-
-            {#            <div class="mt-3">#}
-            {#                <fieldset class="text-center">#}
-            {#                    <select id="select-horario" required name="select-horario" class="form-control select-form" autocomplete="off">#}
-            {#                        <option value="0" disabled selected>Selecione o horário de trabalho</option>#}
-            {#                    </select>#}
-            {#                </fieldset>#}
-            {#            </div>#}
-            {#            <div class="mt-3">#}
-            {#                <fieldset class="text-center">#}
-            {#                    <select id="select-forma" required name="select-forma" class="form-control select-form" autocomplete="off">#}
-            {#                        <option value="0" disabled selected>Selecione a forma de pagamento</option>#}
-            {#                    </select>#}
-            {#                </fieldset>#}
-            {#            </div>#}
-        </div>
-
-        <div class="col-12 mt-4">
             <div>
                 <span class="font-weight-bold">
                     Quadro de funcionarios
                 </span>
-{#                <style>#}
-{#                    table {#}
-{#                        font-family: arial, sans-serif;#}
-{#                        border-collapse: collapse;#}
-{#                        width: 100%;#}
-{#                    }#}
-{##}
-{#                    td, th {#}
-{#                        border: 1px solid #dddddd;#}
-{#                        text-align: center;#}
-{#                    }#}
-{#                    th {#}
-{#                        background-color: #dddddd;#}
-{#                    }#}
-{##}
-{#                    tr:nth-child(even) {#}
-{#                        background-color: #dddddd;#}
-{#                    }#}
-{#                </style>#}
-{#                <style>#}
-{#                    table.scroll {#}
-{#                        width: 100%; /* Optional */#}
-{#                        /* border-collapse: collapse; */#}
-{#                        border-spacing: 0;#}
-{#                        border: 2px solid black;#}
-{#                    }#}
-{##}
-{#                    table.scroll tbody,#}
-{#                    table.scroll thead {#}
-{#                        display: block;#}
-{#                    }#}
-{##}
-{#                    thead tr th {#}
-{#                        height: 30px;#}
-{#                        line-height: 30px;#}
-{#                        /* text-align: left; */#}
-{#                    }#}
-{##}
-{#                    table.scroll tbody {#}
-{#                        height: 300px;#}
-{#                        overflow-y: auto;#}
-{#                        overflow-x: auto;#}
-{#                    }#}
-{##}
-{#                    tbody {#}
-{#                        border-top: 2px solid black;#}
-{#                    }#}
-{##}
-{#                    table tbody {#}
-{#                        height: 300px;#}
-{#                        overflow-y: scroll;#}
-{#                        display: block;#}
-{#                    }#}
-{##}
-{#                    table thead {#}
-{#                        display: block;#}
-{#                    }#}
-{##}
-{#                    tbody td, thead th {#}
-{#                        border-right: 1px solid black;#}
-{#                        overflow-x:hidden;#}
-{#                        /* white-space: nowrap; */#}
-{#                    }#}
-{##}
-{#                    tbody td:last-child, thead th:last-child {#}
-{#                        border-right: none;#}
-{#                    }#}
-{#                </style>#}
-
+                <div class="text-right mb-2">
+                    <a href="{% url 'salao.cadastrar.funcionario' %}">
+                        <div class="btn btn-primary">Cadastrar funcionário</div>
+                    </a>
+                </div>
                 <table id="tabela_agendamentos" class="table table-striped table-bordered">
                     <thead>
                     <tr>
@@ -178,50 +50,120 @@
                     </tbody>
                 </table>
             </div>
-            <div class="text-center mt-3">
-                <a href="{% url 'salao.cadastrar.funcionario' %}">
-                    <div class="btn btn-primary">Cadastrar funcionário</div>
-                </a>
+        </div>
+    </div>
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="contrato_modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Para contrato de trabalho:</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <span class="font-weight-bold">Por favor, preencha os dados: </span>
+                    </div>
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mt-1">
+                                Valor Hora: <input type="text" class="form-control numeric" id="valor-hora">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Imprimir</button>
+                </div>
             </div>
         </div>
     </div>
 
+
+    <div class="modal fade" tabindex="-1" role="dialog" id="recibo_modal" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Para contrato de trabalho:</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div>
+                        <span class="font-weight-bold">Por favor, preencha os dados: </span>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-6">
+                            <div class="mt-1">
+                                Valor pago: <input type="text" class="form-control numeric" id="valor-pago">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mt-1">
+                                Dia inicial: <input type="date" class="form-control" id="data-ini">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mt-1">
+                                Dia final: <input type="date" class="form-control" id="data-final">
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="mt-1">
+                                Dia pago: <input type="date" class="form-control" id="data-pago">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary">Imprimir</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
     <div hidden id="contrato-trabalho">
-        <div class="font-weight-bold">
-            CONTRATO DE TRABALHO
-        </div>
         <div>
-            CONTRATO DE TRABALHO
-        </div>
-        <div>
-            Por este instrumento particular, que entre si fazem a empresa Salão & CIA, pessoa jurídica de direito privado, inscrita no CPF sob o número <span id="cpf_empregador">111.111.111-11</span>,
-            com sede à Rua 1 de Junho, 1999, Rebouças, doravante denominada EMPREGADORA, e de outro lado <span id="nome_funcionario"></span>, inscrito(a) no CPF sob o número <span id="cpf_funcionario"></span>, residente
-            domiciliado(a) à <span id="endereco_funcionario"></span>, daqui em diante denomidado(a) EMPREGADO(a), fica justo e acordado o contrato de trabalho intermitente nos termos seguintes.
-            <br>
-            1. O(a) EMPREGADO(a) é contratado(a) na modalidade de trabalho intermitente, conforme artigo 443 e seu paragrafo terceiro, e artigo 452-A e seus parágrafos da CLT.
-            <br>
-            2. O(a) EMPREGADO(a) exercerá a função de <span id="cargo_funcionario"></span> com todas as atribuicoes que lhe são peculiares, bem como as que vierem a ser designadas através de instruções da EMPREGADORA.
-            <br>
-            3. O(a) EMPREGADO(a) receberá o salário de R$ <span id="valor-hora-span"></span> (<span id="valor-extenso"></span>) reais por hora trabalhada.
-            <br>
-            4. A EMPREGADORA convocará o(a) EMPREGADO(a) por meio de comunicação eficaz, informando a jornada.
+            <div class="font-weight-bold">
+                CONTRATO DE TRABALHO
+            </div>
+            <div>
+                Por este instrumento particular, que entre si fazem a empresa Salão & CIA, pessoa jurídica de direito privado, inscrita no CPF sob o número <span id="cpf_empregador">111.111.111-11</span>,
+                com sede à Rua 1 de Junho, 1999, Rebouças, doravante denominada EMPREGADORA, e de outro lado <span id="nome_funcionario"></span>, inscrito(a) no CPF sob o número <span id="cpf_funcionario"></span>, residente
+                domiciliado(a) à <span id="endereco_funcionario"></span>, daqui em diante denomidado(a) EMPREGADO(a), fica justo e acordado o contrato de trabalho intermitente nos termos seguintes.
+                <br>
+                1. O(a) EMPREGADO(a) é contratado(a) na modalidade de trabalho intermitente, conforme artigo 443 e seu paragrafo terceiro, e artigo 452-A e seus parágrafos da CLT.
+                <br>
+                2. O(a) EMPREGADO(a) exercerá a função de <span id="cargo_funcionario"></span> com todas as atribuicoes que lhe são peculiares, bem como as que vierem a ser designadas através de instruções da EMPREGADORA.
+                <br>
+                3. O(a) EMPREGADO(a) receberá o salário de R$ <span id="valor-hora-span"></span> (<span id="valor-extenso"></span>) reais por hora trabalhada.
+                <br>
+                4. A EMPREGADORA convocará o(a) EMPREGADO(a) por meio de comunicação eficaz, informando a jornada.
+            </div>
         </div>
     </div>
 
 
     <div hidden id="recibo-pagamento">
-        <div class="font-weight-bold">
-            RECIBO DE PAGAMENTO
-        </div>
         <div>
-            Recebi de .....................................................................................................................................
-            a quantidade de R$ <span id="valor-pago-span"></span> (<span id="valor-extenso-pago"></span> reais) correspondente a <span id="data-ini-span"></span> até
-            <span id="data-fim-span"></span>
-            e para clareza firmo presente na cidade ...........................
-            no dia <span id="data-pago-span"></span>.
-            <br>
-            Assinatura............................................................
-            Nome por extenso <span id="valor-nome-extenso"></span>
+            <div class="font-weight-bold">
+                RECIBO DE PAGAMENTO
+            </div>
+            <div>
+                Recebi de .....................................................................................................................................
+                a quantidade de R$ <span id="valor-pago-span"></span> (<span id="valor-extenso-pago"></span> reais) correspondente a <span id="data-ini-span"></span> até
+                <span id="data-fim-span"></span>
+                e para clareza firmo presente na cidade ...........................
+                no dia <span id="data-pago-span"></span>.
+                <br>
+                Assinatura............................................................
+                Nome por extenso <span id="valor-nome-extenso"></span>
+            </div>
         </div>
     </div>
     <div class="row mt-3">
@@ -232,40 +174,74 @@
 
     <script>
         function imprimir_contrato(cpf_funcionario, rua_funcionario, numero_funcionario, bairro_funcionario, cidade_funcionario, uf_funcionario, nome_funcionario, cargo_funcionario) {
-
-            let valor_trabalho = $('#valor-hora').val();
-            let valor_extenso = valor_trabalho.extenso();
-            $('#nome_funcionario').html(nome_funcionario);
-            $('#cpf_funcionario').html(cpf_funcionario);
-            $('#cargo_funcionario').html(cargo_funcionario);
-            $('#valor-extenso').html(valor_extenso);
-            $('#valor-hora-span').html(valor_trabalho);
-            $('#endereco_funcionario').html(rua_funcionario + ', ' + numero_funcionario + ', ' + bairro_funcionario + ' - ' + cidade_funcionario + '/' + uf_funcionario);
-            var conteudo = document.getElementById('contrato-trabalho').innerHTML,
-                tela_impressao = window.open('about:blank');
-
-            tela_impressao.document.write(conteudo);
-            tela_impressao.window.print();
-            tela_impressao.window.close();
+            $('#contrato_modal').modal('show').find('button').off('click').on('click', function(){
+                let valor_trabalho = $('#valor-hora').val();
+                $('#valor-hora').removeClass('border-danger');
+                if(valor_trabalho){
+                    let valor_extenso = valor_trabalho.extenso();
+                    $('#nome_funcionario').html(nome_funcionario);
+                    $('#cpf_funcionario').html(cpf_funcionario);
+                    $('#cargo_funcionario').html(cargo_funcionario);
+                    $('#valor-extenso').html(valor_extenso);
+                    $('#valor-hora-span').html(valor_trabalho);
+                    $('#endereco_funcionario').html(rua_funcionario + ', ' + numero_funcionario + ', ' + bairro_funcionario + ' - ' + cidade_funcionario + '/' + uf_funcionario);
+                    var conteudo = $($('#contrato-trabalho').children()[0]);
+                    conteudo.printThis();
+                }
+                else {
+                    $('#valor-hora').addClass('border-danger');
+                    $('#valor-hora').on('keyup.fxs', function(ev){
+                        if(ev.target.value)
+                            $('#valor-hora').removeClass('border-danger');
+                        else
+                            $('#valor-hora').addClass('border-danger');
+                    })
+                }
+            });
         }
     </script>
     <script>
         function imprimir_recibo(matricula){
-            let valor_pago = $('#valor-pago').val();
-            let valor_extenso = valor_pago.extenso();
-            $('#valor-extenso-pago').html(valor_extenso);
-            $('#valor-pago-span').html(valor_pago);
-            let nome = $('#' + matricula + '-nome').val()
-            $('#data-ini-span').html($('#data-ini').val());
-            $('#data-fim-span').html($('#data-final').val());
-            $('#data-pago-span').html($('#data-pago').val());
-            $('#valor-nome-extenso').html(nome)
-            var conteudo = document.getElementById('recibo-pagamento').innerHTML,
-                tela_impressao = window.open('about:blank');
+            $('#recibo_modal').modal('show').find('button').off('click').on('click.func', function(){
+                let valor_pago = $('#valor-pago').val();
+                let valor_extenso = valor_pago.extenso();
+                let nome = $('#' + matricula + '-nome').val();
+                $('#valor-pago').removeClass('border-danger');
 
-            tela_impressao.document.write(conteudo);
-            tela_impressao.window.print();
-            tela_impressao.window.close();
+                if($('#data-ini').val() && $('#data-ini').val().indexOf('-') > -1) {
+                    var data_ini = $('#data-ini').val().split('-');
+                    data_ini = data_ini[2] + "/" + data_ini[1] + "/" + data_ini[0];
+                }
+                if($('#data-final').val() && $('#data-final').val().indexOf('-') > -1) {
+                    var data_fim = $('#data-final').val().split('-');
+                    data_fim = data_fim[2] + "/" + data_fim[1] + "/" + data_fim[0];
+                }
+                if($('#data-pago').val() && $('#data-pago').val().indexOf('-') > -1){
+                    var data_pago = $('#data-pago').val().split('-');
+                    data_pago = data_pago[2] + "/" + data_pago[1] + "/" + data_pago[0];
+                }
+                if(valor_pago){
+                    $('#valor-extenso-pago').html(valor_extenso);
+                    $('#valor-pago-span').html(valor_pago);
+                    $('#data-ini-span').html(data_ini);
+                    $('#data-fim-span').html(data_fim);
+                    $('#data-pago-span').html(data_pago);
+                    $('#valor-nome-extenso').html(nome);
+                    var conteudo = $($('#recibo-pagamento').children()[0]);
+                    conteudo.printThis();
+                }
+                else {
+                    if(!valor_pago){
+                        $('#valor-pago').addClass('border-danger');
+                        $('#valor-pago').on('keyup.fxs', function(ev){
+                            if(ev.target.value)
+                                $('#valor-pago').removeClass('border-danger');
+                            else
+                                $('#valor-pago').addClass('border-danger');
+                        })
+                    }
+                }
+            });
         }
     </script>
     <script>
