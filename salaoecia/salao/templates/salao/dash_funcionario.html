@@ -5,79 +5,234 @@
 {% block titulo %}Dashboard | {{ block.super }}{% endblock %}
 
 {% block conteudo %}
-    <div class="row">
-        <div class="col-12">
+    <p class="text-body ml-3">Bem vindo, <span class="font-weight-bold">{{ request.user.name|title }}</span>, seu último acesso foi em <span class="font-weight-semibold">{{ ultimo_login|date:"d/m/Y" }}</span></p>
+
+    <div class="row mt-4">
+        <div class="col"></div>
+        <div class="col-8">
             <div class="row">
-                <div class="col-12">
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <span class="font-weight-bold">Bem vindo, {{ request.user.name}}, seu último acesso foi em {{ ultimo_login|date:"d/m/Y" }}</span>
-                        </div>
-                    </div>
-                    {% for a in agendamentos_hoje %}
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <span class="font-weight-bold">{{ a.id }} - {{ a.cliente.name }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                    ---
-                    {% for a in agendamentos_mes %}
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <span class="font-weight-bold">{{ a.id }} - {{ a.cliente.name }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                ---
-                    {% for a in agendamentos_prestador %}
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <span class="font-weight-bold">{{ a }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                ---
-                    {% for a in agendamentos_faixa_etaria %}
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <span class="font-weight-bold">{{ a }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                ---
-                    {% for a in agendamentos_sexo %}
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <span class="font-weight-bold">{{ a }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
-                ---
-                    {% for a in clientes_previstos %}
-                    <div class="row mb-3">
-                        <div class="col-12">
-                            <span class="font-weight-bold">{{ a }}</span>
-                        </div>
-                    </div>
-                    {% endfor %}
+                <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                    <div id="graph_agendamentos_hoje" style="width:100%; height:300px;"></div>
                 </div>
+
+                <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div id="graph_agendamentos_mes" style="width:100%; height:300px;"></div>
+                </div>
+
+                <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div id="graph_agendamentos_por_func" style="width:100%; height:300px;"></div>
+                </div>
+
+                <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3">
+                    <div id="graph_agendamentos_por_faixa_etaria" style="width:100%; height:300px;"></div>
+                </div>
+
             </div>
+
+            {% for a in agendamentos_sexo %}
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <span class="font-weight-bold">{{ a }}</span>
+                    </div>
+                </div>
+            {% endfor %}
+            ---
+            {% for a in clientes_previstos %}
+                <div class="row mb-3">
+                    <div class="col-12">
+                        <span class="font-weight-bold">{{ a }}</span>
+                    </div>
+                </div>
+            {% endfor %}
         </div>
+        <div class="col"></div>
     </div>
     <div class="row mt-3">
         <div class="col">
             {% include 'parciais/_pagination.html' %}
         </div>
     </div>
+
+    <script>
+        var myChart = echarts.init(document.getElementById('graph_agendamentos_hoje'), 'walden');
+        var data = [
+            {% for a in agendamentos_hoje %}
+                {
+                    name: "{{ a.cliente.name|title }}",
+                    value: {{ a.id }}
+                },
+            {% endfor %}
+        ];
+        option = {
+            title: [{
+                text: 'Agendamentos Hoje:'
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'right',
+                data: data
+            },
+            series: [{
+                type: 'pie',
+                radius: '55%',
+                center: ['20%', '50%'],
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                labelLine: {
+                    show: false
+                },
+                data: data,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+    <script>
+        var myChart = echarts.init(document.getElementById('graph_agendamentos_mes'), 'walden');
+        var data = [
+            {% for a in agendamentos_mes %}
+                {{ a.data|date:"d" }},
+            {% endfor %}
+        ];
+        function diasNoMes(mes, ano) {var data = new Date(ano, mes+1, 0);return data.getDate();}
+        var hoje=new Date(),mes=hoje.getMonth(),ano=hoje.getFullYear(),array_dias=[],array_valores=[];
+        for(var i=1; i<diasNoMes(mes, ano)+1;i++){array_dias.push(i);}
+        for(var c=0; c<array_dias.length; c++){function filtreDias(value){if(value === c){return value;}}var dados_retornados = data.filter(filtreDias);array_valores.push(dados_retornados.length);}
+        option = {
+            title: [{
+                text: 'Agendamentos no Mês:'
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: 'Dia {b}:<br> {c} Agendamentos'
+            },
+            xAxis: {
+                type: 'category',
+                data: array_dias
+            },
+            yAxis: {
+                type: 'value',
+            },
+            series: [{
+                data: array_valores,
+                type: 'bar'
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+    <script>
+        var myChart = echarts.init(document.getElementById('graph_agendamentos_por_func'), 'walden');
+        var data = [
+            {% for a in agendamentos_prestador %}
+                {
+                    name: "{{ a.funcionario__name|title }}",
+                    value: {{ a.qtd }}
+                },
+            {% endfor %}
+        ];
+        option = {
+            title: [{
+                text: 'Agendamentos Por Funcionário:'
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}:<br> {c} Agendamentos'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'right',
+                data: data
+            },
+            series: [{
+                type: 'pie',
+                radius: '55%',
+                center: ['20%', '50%'],
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                labelLine: {
+                    show: false
+                },
+                data: data,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+    <script>
+        var myChart = echarts.init(document.getElementById('graph_agendamentos_por_faixa_etaria'), 'walden');
+        var data = [
+            {% for a in agendamentos_faixa_etaria %}
+                {
+                    name: "{{ a.cliente__birth|date:"d/m/Y" }}",
+                    value: {{ a.qtd }}
+                },
+            {% endfor %}
+        ];
+        option = {
+            title: [{
+                text: 'Agendamentos Por Funcionário:'
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}:<br> {c} Agendamentos'
+            },
+            legend: {
+                orient: 'vertical',
+                left: 'right',
+                data: data
+            },
+            series: [{
+                type: 'pie',
+                radius: '55%',
+                center: ['20%', '50%'],
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                labelLine: {
+                    show: false
+                },
+                data: data,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+
+
     <script>
         $(document).ready(function () {
             $('#servicos-agendamento').select2({
                 theme: "bootstrap"
             });
-        })
+        });
         $(document).ready(function () {
-            console.log('1')
             var calendar = $('#calendar').fullCalendar({
                 header: {
                     left: 'prev,next today',
