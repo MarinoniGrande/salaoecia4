@@ -115,14 +115,15 @@
                 selectHelper: true,
                 editable: true,
                 eventLimit: true,
-                select: function (start, end, allDay) {
-                    $('#data-agendamento').html(calendar.formatDate(start, "DD/MM/Y"));
-                    $('#data-agendamento-input').val(calendar.formatDate(start, "DD/MM/Y"));
-                    {#var title = prompt("Enter Event Title");#}
+                select: function (event) {
+                    var start = event.startStr.split('-');
+                    start = start[2] + '/' + start[1] + '/' + start[0];
+                    $('#data-agendamento').html(start);
+                    $('#data-agendamento-input').val(start);
                 },
                 eventResize: function (event) {
-                    var start = calendar.formatDate(event.event.start, "Y-MM-DD HH:mm:ss");
-                    var end = calendar.formatDate(event.event.end, "Y-MM-DD HH:mm:ss");
+                    var start = event.oldEvent.startStr;
+                    var end = event.event.startStr;
                     var title = event.event.title;
                     var id = event.event.id;
                     $.ajax({
@@ -131,33 +132,29 @@
                         data: {'title': title, 'start': start, 'end': end, 'id': id},
                         dataType: "json",
                         success: function (data) {
-                            calendar.fullCalendar('refetchEvents');
-                            alert('Event Update');
+                            {#calendar.fullCalendar('refetchEvents');#}
+                            {#alert('Event Update');#}
                         },
-                        failure: function (data) {
+                        error: function (data) {
                             alert('There is a problem!!!');
                         }
                     });
                 },
-                eventDrop: function (event, x ,c) {
-                                        console.log(event.view.activeStart)
-                                        console.log(event.view.activeStart)
-
-                    var start = calendar.formatDate(event.event._instance.range.start, "Y-MM-DD HH:mm:ss");
-                    var end = calendar.formatDate(event.event._instance.range.end, "Y-MM-DD HH:mm:ss");
+                eventDrop: function (event) {
+                    var start = event.oldEvent.startStr;
+                    var end = event.event.startStr;
                     var title = event.event.title;
-                    var id = event.event.publicId;
-                    console.log({'title': title, 'start': start, 'end': end, 'id': id})
+                    var id = event.event.id;
                     $.ajax({
                         type: "GET",
                         url: '/update',
                         data: {'title': title, 'start': start, 'end': end, 'id': id},
                         dataType: "json",
                         success: function (data) {
-                            calendar.fullCalendar('refetchEvents');
-                            alert('Event Update');
+                            {#calendar.fullCalendar('refetchEvents');#}
+                            {#alert('Event Update');#}
                         },
-                        failure: function (data) {
+                        error: function (data) {
                             alert('There is a problem!!!');
                         }
                     });
