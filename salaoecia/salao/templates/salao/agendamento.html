@@ -98,8 +98,9 @@
             });
         })
         $(document).ready(function () {
-            console.log('1')
-            var calendar = $('#calendar').fullCalendar({
+            var calendar = $('#calendar')[0];
+            calendar = new FullCalendar.Calendar(calendar, {
+                locale: "pt-br",
                 header: {
                     left: 'prev,next today',
                     center: 'title',
@@ -115,15 +116,15 @@
                 editable: true,
                 eventLimit: true,
                 select: function (start, end, allDay) {
-                    $('#data-agendamento').html($.fullCalendar.formatDate(start, "DD/MM/Y"));
-                    $('#data-agendamento-input').val($.fullCalendar.formatDate(start, "DD/MM/Y"));
+                    $('#data-agendamento').html(calendar.formatDate(start, "DD/MM/Y"));
+                    $('#data-agendamento-input').val(calendar.formatDate(start, "DD/MM/Y"));
                     {#var title = prompt("Enter Event Title");#}
                 },
                 eventResize: function (event) {
-                    var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
-                    var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
-                    var title = event.title;
-                    var id = event.id;
+                    var start = calendar.formatDate(event.event.start, "Y-MM-DD HH:mm:ss");
+                    var end = calendar.formatDate(event.event.end, "Y-MM-DD HH:mm:ss");
+                    var title = event.event.title;
+                    var id = event.event.id;
                     $.ajax({
                         type: "GET",
                         url: '/update',
@@ -138,12 +139,15 @@
                         }
                     });
                 },
+                eventDrop: function (event, x ,c) {
+                                        console.log(event.view.activeStart)
+                                        console.log(event.view.activeStart)
 
-                eventDrop: function (event) {
-                    var start = $.fullCalendar.formatDate(event.start, "Y-MM-DD HH:mm:ss");
-                    var end = $.fullCalendar.formatDate(event.end, "Y-MM-DD HH:mm:ss");
-                    var title = event.title;
-                    var id = event.id;
+                    var start = calendar.formatDate(event.event._instance.range.start, "Y-MM-DD HH:mm:ss");
+                    var end = calendar.formatDate(event.event._instance.range.end, "Y-MM-DD HH:mm:ss");
+                    var title = event.event.title;
+                    var id = event.event.publicId;
+                    console.log({'title': title, 'start': start, 'end': end, 'id': id})
                     $.ajax({
                         type: "GET",
                         url: '/update',
@@ -158,11 +162,10 @@
                         }
                     });
                 },
-
                 eventClick: function (event) {
-                },
-
+                }
             });
+            calendar.render();
         });
 
     </script>
