@@ -39,8 +39,6 @@ class AgendamentoView(View):
         erro = False
         descricao = None
         funcionario = self.request.POST.get('profissional-agendamento')
-        if funcionario in ['', None]:
-            erro, descricao = True, 'funcionario'
         servicos_selecionados = self.request.POST.getlist('servicos-agendamento')
         if len(servicos_selecionados) == 0:
             erro, descricao = True, 'servicos'
@@ -53,7 +51,7 @@ class AgendamentoView(View):
 
         if not erro:
             novo_agendamento = salaoecia.salao.models.Agendamento()
-            novo_agendamento.funcionario_id = funcionario
+            novo_agendamento.funcionario_id = funcionario if funcionario not in funcionario in ['', None] else None
             novo_agendamento.horario_id = horario
             novo_agendamento.data = datetime.datetime.strptime(dia, "%d/%m/%Y").date()
             novo_agendamento.cliente = self.request.user
