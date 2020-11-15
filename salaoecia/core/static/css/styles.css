@@ -185,3 +185,7 @@ aside {
 aside p {
     margin: 0.4em 0;
 }
+
+.modal.show{
+    display:block !important;
+}

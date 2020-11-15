@@ -22,9 +22,9 @@
                     <div class="col-12 text-left d-flex justify-content-between">
                         <label class="font-weight-bold mb-0 text-muted"> Operação </label>
                         <div>
-                            <span class="mr-5"><input type="radio" checked="" name="operacao" value="cadastrar" required> Cadastrar</span>
-                            <span class="mr-5"><input type="radio" name="operacao" value="alterar" required> Alterar</span>
-                            <span><input type="radio" name="operacao" value="desativar" required> Desabilitar</span>
+                            <span class="mr-5"><input type="radio" checked="" name="operacao" value="cadastrar" id="operacao_cadastrar" required><label for="operacao_cadastrar">Cadastrar</label> </span>
+                            <span class="mr-5"><input type="radio" name="operacao" value="alterar" id="operacao_alterar" required><label for="operacao_alterar"> Alterar</label></span>
+                            <span><input type="radio" name="operacao" value="desativar" id="operacao_desativar" required><label for="operacao_desativar">Desabilitar</label> </span>
                         </div>
                     </div>
                     <div class="col-12">
@@ -164,6 +164,12 @@
         });
     </script>
     <script>
+    $("[name='operacao']").on('change', function(ev){
+        if(ev.target.value === "alterar"){
+            carregar_produto($('[name="select-produto"]').val());
+        }
+    });
+
         function carregar_produto(id) {
             $.ajax({
                 type: "POST",

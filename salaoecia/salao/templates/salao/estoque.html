@@ -5,81 +5,33 @@
 {% block titulo %}Gestão de estoque | {{ block.super }}{% endblock %}
 
 {% block conteudo %}
-    <div class="row" id="gestao-estoque">
-        <div class="col-12">
-            <span class="font-weight-bold">
+    <div class="row">
+        <div class="col-12" id="export_print">
+            <h3 class="text-center">
                 Gestão de estoque
-            </span>
-            <style>
-                table {
-                    font-family: arial, sans-serif;
-                    border-collapse: collapse;
-                    width: 100%;
-                }
+            </h3>
 
-                td, th {
-                    border: 1px solid #dddddd;
-                    text-align: center;
-                    padding: 8px;
-                }
-
-                tr:nth-child(even) {
-                    background-color: #dddddd;
-                }
-            </style>
-            <style>
-                table.scroll {
-                    width: 100%; /* Optional */
-                    /* border-collapse: collapse; */
-                    border-spacing: 0;
-                    border: 2px solid black;
-                }
-
-                table.scroll tbody,
-                table.scroll thead {
-                    display: block;
-                }
-
-                thead tr th {
-                    height: 30px;
-                    line-height: 30px;
-                    /* text-align: left; */
-                }
-
-                table.scroll tbody {
-                    height: 300px;
-                    overflow-y: auto;
-                    overflow-x: hidden;
-                }
-
-                tbody {
-                    border-top: 2px solid black;
-                }
-
-                tbody td, thead th {
-                    width: 20%; /* Optional */
-                    border-right: 1px solid black;
-                    /* white-space: nowrap; */
-                }
-
-                tbody td:last-child, thead th:last-child {
-                    border-right: none;
-                }
-            </style>
-            <table id="tabela_agendamentos" class="scroll">
+            <div  class="text-right mb-2">
+                <a href="{% url 'salao.alterar.produto' %}">
+                    <div class="btn btn-primary">
+                        Cadastrar Produto
+                    </div>
+                </a>
+            </div>
+            <table id="tabela_agendamentos" class="table w-100 table-striped table-bordered">
                 <thead>
                 <tr>
                     <th>Data Ref</th>
                     <th>EAN</th>
                     <th>Produto</th>
-                    <th>Quantidade em estoque</th>
-                    <th>Quantidade atualizada</th>
+                    <th>Qtd em estoque</th>
+                    <th>Qtd atualizada</th>
                     <th>Status</th>
                 </tr>
                 </thead>
                 <tbody>
                 {% for p in produtos %}
-                    <tr>
+                    <tr data-exportable="{{ p.status }}">
                         <td>{{ p.dat_insercao|date:"d/m/Y" }}</td>
                         <td>{{ p.ean }}</td>
                         <td>{{ p.nome }}</td>
@@ -93,18 +45,13 @@
         </div>
     </div>
     <div class="row mt-3">
-        <div class="col-12 text-center">
-            <div class="btn btn-info" onclick="atualizar_estoque()">
+        <div class="col-12 text-center d-flex justify-content-between">
+            <button class="btn btn-info" onclick="atualizar_estoque()">
                 Atualizar Estoque
-            </div>
-            <div class="btn ml-5 mr-5 btn-warning" id="btn-imprimir">
+            </button>
+            <button class="btn btn-primary text-white" id="btn-imprimir">
                 Imprimir Lista
-            </div>
-            <a href="{% url 'salao.alterar.produto' %}">
-                <div class="btn btn-success">
-                    Cadastrar produto
-                </div>
-            </a>
+            </button>
         </div>
     </div>
     <div class="row mt-3">
@@ -114,7 +61,7 @@
     </div>
     <script>
         // Change the selector if needed
-        var $table = $('table.scroll'),
+        var $table = $('table'),
             $bodyCells = $table.find('tbody tr:first').children(),
             colWidth;
 
@@ -133,17 +80,21 @@
     </script>
     <script>
         document.getElementById('btn-imprimir').onclick = function () {
-            var conteudo = document.getElementById('gestao-estoque').innerHTML,
-                tela_impressao = window.open('about:blank');
 
-            tela_impressao.document.write(conteudo);
-            tela_impressao.window.print();
-            tela_impressao.window.close();
+            $('#export_print').printThis({
+                beforePrint: function(){
+                    $('#export_print').find('[data-exportable="False"]').addClass('d-none');
+                },
+                afterPrint: function(){
+                    $('#export_print').find('[data-exportable="False"]').removeClass('d-none');
+                }
+
+            });
         };
     </script>
     <script>
         function atualizar_estoque() {
-            let novos_valores = {}
+            let novos_valores = {};
             {% for p in produtos %}
                 if ($('#estoque-id-' + {{ p.id }}).val() !== '') {
                     novos_valores['{{ p.id }}'] = $('#estoque-id-' + {{ p.id }}).val()
@@ -164,7 +115,7 @@
             });
         }
     </script>
-        <script>
+    <script>
         $(document).on("input", ".numeric", function () {
             this.value = this.value.replace(/\D/g, '');
         });
