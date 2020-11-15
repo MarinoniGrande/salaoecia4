@@ -48,6 +48,31 @@
             buscaCep(ev.target.value, '');
         });
 
+        // função para formatar data no padrão 2020-03-27 para idade em inteiro
+        function formatarDataParaIdade(aniversario) {
+            if (aniversario && aniversario.toString().indexOf('-') > -1 && aniversario.toString().length === 10) {
+                let nascimento = aniversario.split("-");
+                let dataNascimento = new Date(parseInt(nascimento[0], 10), parseInt(nascimento[1], 10) - 1, parseInt(nascimento[2], 10));
+
+                let diferenca = Date.now() - dataNascimento.getTime();
+                let idade = new Date(diferenca); // miliseconds from epoch
+                return Math.abs(idade.getUTCFullYear() - 1970);
+            } else {
+                return aniversario;
+            }
+        }
+
+        $('#id_birth').on('change', function(ev){
+            ev.target.value;
+            if(formatarDataParaIdade(ev.target.value) < 13){
+                if($(this).parent().find('.erro_13_anos').length === 0)
+                    $(this).parent().append(`<ul class="errorlist erro_13_anos"><li>O usuário não pode ter uma idade menor que 13 anos</li></ul>`);
+            }
+            else{
+                $(this).parent().find('.erro_13_anos').remove();
+            }
+        });
+
 
         function buscaCep(value) {
             var Cep = value.replace(/\D/g, '');
