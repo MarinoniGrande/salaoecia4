@@ -5,45 +5,44 @@
 {% block titulo %}Dashboard | {{ block.super }}{% endblock %}
 
 {% block conteudo %}
-    <p class="text-body ml-3">Bem vindo, <span class="font-weight-bold">{{ request.user.name|title }}</span>, seu último acesso foi em <span class="font-weight-semibold">{{ ultimo_login|date:"d/m/Y" }}</span></p>
 
-    <div class="row mt-4">
+    <div class="row mt-4 pl-3">
+        <div class="col-12">
+            <p class="text-body">Bem vindo, <span class="font-weight-bold">{{ request.user.name|title }}</span>, seu último acesso foi em <span class="font-weight-semibold">{{ ultimo_login|date:"d/m/Y" }}</span></p>
+        </div>
         <div class="col"></div>
-        <div class="col-8">
+        <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
             <div class="row">
-                <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12">
+                <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12 mt-3">
                     <div id="graph_agendamentos_hoje" style="width:100%; height:300px;"></div>
+                </div>
+
+                <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12 mt-3">
+                    <div id="graph_agendamentos_por_func" style="width:100%; height:300px;"></div>
+                </div>
+
+                <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12 mt-3">
+                    <div id="graph_agendamentos_por_faixa_etaria" style="width:100%; height:300px;"></div>
+                </div>
+                <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12 mt-3">
+                    <div id="graph_agendamentos_por_genero" style="width:100%; height:300px;"></div>
                 </div>
 
                 <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3">
                     <div id="graph_agendamentos_mes" style="width:100%; height:300px;"></div>
                 </div>
 
-                <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3">
-                    <div id="graph_agendamentos_por_func" style="width:100%; height:300px;"></div>
-                </div>
 
-                <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3">
-                    <div id="graph_agendamentos_por_faixa_etaria" style="width:100%; height:300px;"></div>
-                </div>
 
             </div>
 
-            {% for a in agendamentos_sexo %}
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <span class="font-weight-bold">{{ a }}</span>
-                    </div>
-                </div>
-            {% endfor %}
-            ---
-            {% for a in clientes_previstos %}
-                <div class="row mb-3">
-                    <div class="col-12">
-                        <span class="font-weight-bold">{{ a }}</span>
-                    </div>
-                </div>
-            {% endfor %}
+            {#            {% for a in clientes_previstos %}#}
+            {#                <div class="row mb-3">#}
+            {#                    <div class="col-12">#}
+            {#                        <span class="font-weight-bold">{{ a }}</span>#}
+            {#                    </div>#}
+            {#                </div>#}
+            {#            {% endfor %}#}
         </div>
         <div class="col"></div>
     </div>
@@ -63,23 +62,169 @@
                 },
             {% endfor %}
         ];
+
+        var title_text = 'Agendamentos Hoje: ';
+        title_text += data.length > 0 ? "" : " (Sem Dados) ";
+
         option = {
             title: [{
-                text: 'Agendamentos Hoje:'
+                text: title_text
             }],
             tooltip: {
                 trigger: 'item',
                 formatter: '{b}'
             },
-            legend: {
-                orient: 'vertical',
-                left: 'right',
-                data: data
+            series: [{
+                type: 'pie',
+                radius: '55%',
+                center: ['40%', '50%'],
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                labelLine: {
+                    show: false
+                },
+                data: data,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+    <script>
+        var myChart = echarts.init(document.getElementById('graph_agendamentos_por_func'), 'walden');
+        var data = [
+            {% for a in agendamentos_prestador %}
+                {
+                    name: "{{ a.funcionario__name|title }}",
+                    value: {{ a.qtd }}
+                },
+            {% endfor %}
+        ];
+
+        var title_text = 'Agendamentos Por Funcionário: ';
+        title_text += data.length > 0 ? "" : " (Sem Dados) ";
+
+        option = {
+            title: [{
+                text: title_text
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}:<br> {c} Agendamentos'
             },
             series: [{
                 type: 'pie',
                 radius: '55%',
-                center: ['20%', '50%'],
+                center: ['40%', '50%'],
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                labelLine: {
+                    show: false
+                },
+                data: data,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+    <script>
+        // função para formatar data no padrão 2020-03-27 para idade em inteiro
+        function formatarDataParaIdade(aniversario) {
+            if (aniversario && aniversario.toString().indexOf('-') > -1 && aniversario.toString().length === 10) {
+                let nascimento = aniversario.split("-");
+                let dataNascimento = new Date(parseInt(nascimento[0], 10), parseInt(nascimento[1], 10) - 1, parseInt(nascimento[2], 10));
+
+                let diferenca = Date.now() - dataNascimento.getTime();
+                let idade = new Date(diferenca); // miliseconds from epoch
+                return Math.abs(idade.getUTCFullYear() - 1970);
+            } else {
+                return aniversario;
+            }
+        }
+
+        var myChart = echarts.init(document.getElementById('graph_agendamentos_por_faixa_etaria'), 'walden');
+        var data = [
+            {% for a in agendamentos_faixa_etaria %}
+                {
+                    name: formatarDataParaIdade("{{ a.cliente__birth|date:"Y-m-d" }}"),
+                    value: {{ a.qtd }}
+                },
+            {% endfor %}
+        ];
+
+        var title_text = 'Agendamentos Por Faixa Etária: ';
+        title_text += data.length > 0 ? "" : " (Sem Dados) ";
+
+        option = {
+            title: [{
+                text: title_text
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}:<br> {c} Agendamentos'
+            },
+            series: [{
+                type: 'pie',
+                radius: '55%',
+                center: ['40%', '50%'],
+                label: {
+                    show: false,
+                    position: 'center'
+                },
+                labelLine: {
+                    show: false
+                },
+                data: data,
+                emphasis: {
+                    itemStyle: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }]
+        };
+        myChart.setOption(option);
+    </script>
+    <script>
+        var myChart = echarts.init(document.getElementById('graph_agendamentos_por_genero'), 'walden');
+        var data = [
+            {% for a in agendamentos_sexo %}
+                {
+                    name: "{{ a.cliente__sexo }}",
+                    value: {{ a.qtd }}
+                },
+            {% endfor %}
+        ];
+        var title_text = 'Agendamentos Por Gênero: ';
+        title_text += data.length > 0 ? "" : " (Sem Dados) ";
+        option = {
+            title: [{
+                text: title_text
+            }],
+            tooltip: {
+                trigger: 'item',
+                formatter: '{b}:<br> {c} Agendamentos'
+            },
+            series: [{
+                type: 'pie',
+                radius: '55%',
+                center: ['40%', '50%'],
                 label: {
                     show: false,
                     position: 'center'
@@ -112,7 +257,7 @@
         for(var c=0; c<array_dias.length; c++){function filtreDias(value){if(value === c){return value;}}var dados_retornados = data.filter(filtreDias);array_valores.push(dados_retornados.length);}
         option = {
             title: [{
-                text: 'Agendamentos no Mês:'
+                text: 'Agendamentos por Dia:'
             }],
             tooltip: {
                 trigger: 'item',
@@ -132,100 +277,6 @@
         };
         myChart.setOption(option);
     </script>
-    <script>
-        var myChart = echarts.init(document.getElementById('graph_agendamentos_por_func'), 'walden');
-        var data = [
-            {% for a in agendamentos_prestador %}
-                {
-                    name: "{{ a.funcionario__name|title }}",
-                    value: {{ a.qtd }}
-                },
-            {% endfor %}
-        ];
-        option = {
-            title: [{
-                text: 'Agendamentos Por Funcionário:'
-            }],
-            tooltip: {
-                trigger: 'item',
-                formatter: '{b}:<br> {c} Agendamentos'
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'right',
-                data: data
-            },
-            series: [{
-                type: 'pie',
-                radius: '55%',
-                center: ['20%', '50%'],
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                labelLine: {
-                    show: false
-                },
-                data: data,
-                emphasis: {
-                    itemStyle: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }]
-        };
-        myChart.setOption(option);
-    </script>
-    <script>
-        var myChart = echarts.init(document.getElementById('graph_agendamentos_por_faixa_etaria'), 'walden');
-        var data = [
-            {% for a in agendamentos_faixa_etaria %}
-                {
-                    name: "{{ a.cliente__birth|date:"d/m/Y" }}",
-                    value: {{ a.qtd }}
-                },
-            {% endfor %}
-        ];
-        option = {
-            title: [{
-                text: 'Agendamentos Por Funcionário:'
-            }],
-            tooltip: {
-                trigger: 'item',
-                formatter: '{b}:<br> {c} Agendamentos'
-            },
-            legend: {
-                orient: 'vertical',
-                left: 'right',
-                data: data
-            },
-            series: [{
-                type: 'pie',
-                radius: '55%',
-                center: ['20%', '50%'],
-                label: {
-                    show: false,
-                    position: 'center'
-                },
-                labelLine: {
-                    show: false
-                },
-                data: data,
-                emphasis: {
-                    itemStyle: {
-                        shadowBlur: 10,
-                        shadowOffsetX: 0,
-                        shadowColor: 'rgba(0, 0, 0, 0.5)'
-                    }
-                }
-            }]
-        };
-        myChart.setOption(option);
-    </script>
-
-
     <script>
         $(document).ready(function () {
             $('#servicos-agendamento').select2({
