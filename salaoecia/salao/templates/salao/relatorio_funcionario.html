@@ -1,0 +1,48 @@
+{% extends 'base_bs.html' %}
+{% load omfilters %}
+{% load static %}
+
+{% block titulo %}Relatório de funcionários | {{ block.super }}{% endblock %}
+
+{% block conteudo %}
+    <div class="row" id="gestao-estoque">
+        <div class="col-12">
+            <div>
+                <span class="font-weight-bold">
+                    Relatório de funcionários
+                </span>
+                <table id="tabela_agendamentos" class="table table-striped table-bordered">
+                    <thead>
+                    <tr>
+                        <th>Nome</th>
+                        <th>Gênero</th>
+                        <th>E-mail</th>
+                        <th>Data de nascimento</th>
+                        <th>Telefone</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for d in dados %}
+                        <tr>
+                            <td>{% if d.name != None %}{{ d.name }}{% endif %}</td>
+                            <td>{% if d.sexo != None %}{{ d.sexo }}{% endif %}</td>
+                            <td>{% if d.email != None %}{{ d.email }}{% endif %}</td>
+                            <td>{% if d.birth != None %}{{ d.birth|date:"d/m/Y" }}{% endif %}</td>
+                            <td>{% if d.telefone != None %}{{ d.telefone }}{% endif %}</td>
+                        </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+
+
+    <div class="row mt-3">
+        <div class="col">
+            {% include 'parciais/_pagination.html' %}
+        </div>
+    </div>
+
+{% endblock %}

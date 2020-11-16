@@ -24,7 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     number = models.CharField('Número', max_length=5, null=True)
     complement = models.CharField('Complemento', max_length=30, null=True)
     neighborhood = models.CharField('Bairro', max_length=30, null=True)
-    zip_code = models.CharField('CEP', max_length=8, null=True)
+    zip_code = models.CharField('CEP', max_length=20, null=True)
     city = models.CharField('Cidade', max_length=30, null=True)
     state = models.CharField('Estado',
                              max_length=2,

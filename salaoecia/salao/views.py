@@ -572,3 +572,51 @@ class DashboardView(View):
         ultimos_servicos = list(salao.models.AgendamentoServicos.objects.values('servico__nome').filter(agendamento__cliente_id=self.request.user, agendamento__data__gte=data).annotate(Count('servico__nome')))
 
         return JsonResponse({'qtd_agendamentos': quantidade_agendamentos, 'ultimos_servicos': ultimos_servicos}, safe=False)
+
+
+class RelatorioAgendamentos(View):
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_staff:
+            return HttpResponseRedirect(reverse("salao.agendamento"))
+
+        template_name = 'salao/relatorio_agendamento.html'
+        context = {
+            'dados': list(salaoecia.accounts.models.User.objects.values('nome', 'sexo', 'email', 'birth', 'telefone').order_by('nome'))
+        }
+        return render(self.request, template_name, context=context)
+
+
+class RelatorioCaixa(View):
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_staff:
+            return HttpResponseRedirect(reverse("salao.agendamento"))
+
+        template_name = 'salao/relatorio_caixa.html'
+        context = {
+            'dados': list(salao.models.Agendamento.objects.all())
+        }
+        return render(self.request, template_name, context=context)
+
+
+class RelatorioCliente(View):
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_staff:
+            return HttpResponseRedirect(reverse("salao.agendamento"))
+
+        template_name = 'salao/relatorio_clientes.html'
+        context = {
+            'dados': list(salaoecia.accounts.models.User.objects.values('name', 'sexo', 'email', 'birth', 'telefone').exclude(is_staff=True).annotate(qtd_visita=Count('agendamento')).order_by('name'))
+        }
+        return render(self.request, template_name, context=context)
+
+
+class RelatorioFuncionario(View):
+    def get(self, *args, **kwargs):
+        if not self.request.user.is_staff:
+            return HttpResponseRedirect(reverse("salao.agendamento"))
+
+        template_name = 'salao/relatorio_funcionario.html'
+        context = {
+            'dados': list(salaoecia.accounts.models.User.objects.values('name', 'sexo', 'email', 'birth', 'telefone').filter(is_staff=True).order_by('name'))
+        }
+        return render(self.request, template_name, context=context)

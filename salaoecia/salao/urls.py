@@ -1,12 +1,19 @@
 from django.contrib.auth.decorators import login_required
 from django.urls import re_path
 from salaoecia.salao.views import AgendamentoView, GerenciarAgendamentoView, AtualizarAgendamentoView, PegarAgendamentoView, CancelarAgendamentoView, GestaoEstoqueLeituraView, GestaoEstoqueView, CadastroProdutoView, \
-    AtualizarEstoqueView, CarregarProdutoView, CadastroFuncionarioView, QuadroFuncionarioView, CaixaView, PegarClientesView, PegarInformacoesView, PegarProdutoView, FinalizarCompraView, AbrirCaixaView, DashboardView
+    AtualizarEstoqueView, CarregarProdutoView, CadastroFuncionarioView, QuadroFuncionarioView, CaixaView, PegarClientesView, PegarInformacoesView, PegarProdutoView, FinalizarCompraView, AbrirCaixaView, DashboardView, \
+    RelatorioFuncionario, RelatorioAgendamentos, RelatorioCaixa, RelatorioCliente
 
 urlpatterns = [
     re_path(r'cadastrar/agendamentos$', login_required(AgendamentoView.as_view()), name='salao.agendamento'),
     re_path(r'gerenciar/agendamentos$', login_required(GerenciarAgendamentoView.as_view()), name='salao.gerenciar.agendamento'),
     re_path(r'abrir/caixa$', login_required(AbrirCaixaView.as_view()), name='salao.abrir_caixa'),
+
+    re_path(r'relatorio/funcionarios$', login_required(RelatorioFuncionario.as_view()), name="salao.relatorio.funcionarios"),
+    re_path(r'relatorio/clientes$', login_required(RelatorioCliente.as_view()), name="salao.relatorio.cliente"),
+    re_path(r'relatorio/agendamentos$', login_required(RelatorioAgendamentos.as_view()), name="salao.relatorio.agendamentos"),
+    re_path(r'relatorio/caixa$', login_required(RelatorioCaixa.as_view()), name="salao.relatorio.caixa"),
+
     re_path(r'caixa$', login_required(CaixaView.as_view()), name='salao.caixa'),
     re_path(r'pegar/clientes$', login_required(PegarClientesView.as_view()), name="salao.pegar_clientes"),
     re_path(r'pegar/produto$', login_required(PegarProdutoView.as_view()), name="salao.pegar_produto"),

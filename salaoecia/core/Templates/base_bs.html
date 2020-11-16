@@ -131,15 +131,23 @@
                 <li>
                     <a href="{% url 'salao.dashboard' %}">Início</a>
                 </li>
-                {% if request.user.is_staff %}
-                    <li>
-                        <a href="{% url 'salao.gerenciar.agendamento' %}">Gerenciar Agendamentos</a>
-                    </li>
-                {% else %}
-                    <li>
-                        <a href="{% url 'salao.agendamento' %}">Cadastrar Agendamentos</a>
-                    </li>
-                {% endif %}
+                <li>
+                    <a href="#agendamentoSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Agendamentos</a>
+                    <ul class="collapse list-unstyled" id="agendamentoSubmenu">
+                        {% if request.user.is_staff %}
+                            <li>
+                                <a href="{% url 'salao.gerenciar.agendamento' %}">Gerenciar Agendamentos</a>
+                            </li>
+                            <li>
+                                <a href="{% url 'salao.relatorio.agendamentos' %}">Relatórios</a>
+                            </li>
+                        {% else %}
+                            <li>
+                                <a href="{% url 'salao.agendamento' %}">Cadastrar Agendamentos</a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </li>
                 {% if request.user.is_staff %}
                     <li>
                         <a href="#caixaSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Caixa</a>
@@ -148,7 +156,7 @@
                                 <a href="{% url 'salao.caixa' %}">Recebimentos</a>
                             </li>
                             <li>
-                                <a href="#">Relatórios</a>
+                                <a href="{% url 'salao.relatorio.caixa' %}">Relatórios</a>
                             </li>
                         </ul>
                     </li>
@@ -181,7 +189,19 @@
                                     <a href="{% url 'salao.quadro.funcionarios' %}">Quadro de funcionários</a>
                                 </li>
                                 <li>
-                                    <a href="#">Relatórios</a>
+                                    <a href="{% url 'salao.relatorio.funcionarios' %}">Relatórios</a>
+                                </li>
+                            </ul>
+                        </li>
+                    {% endif %}
+                {% endif %}
+                {% if request.user.is_staff %}
+                    {% if request.user.is_admin %}
+                        <li>
+                            <a href="#ClienteSubmenu" data-toggle="collapse" aria-expanded="false" class="dropdown-toggle">Clientes</a>
+                            <ul class="collapse list-unstyled" id="ClienteSubmenu">
+                                <li>
+                                    <a href="{% url 'salao.relatorio.cliente' %}">Relatórios</a>
                                 </li>
                             </ul>
                         </li>
