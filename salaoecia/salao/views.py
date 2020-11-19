@@ -540,7 +540,7 @@ class DashboardView(View):
             template_name = 'salao/dash_funcionario.html'
             informacoes = {
                 'agendamentos_hoje': list(salao.models.Agendamento.objects.all().filter(data=timezone.now().date()).order_by('id')),
-                'agendamentos_mes': list(salao.models.Agendamento.objects.all().filter(data__gte=timezone.now().date().replace(day=1)).order_by('id')),
+                'agendamentos_mes': list(salao.models.Agendamento.objects.all().filter(data__gte=timezone.now().date().replace(day=1)).order_by('data')),
                 'agendamentos_prestador': list(salao.models.Agendamento.objects.values('funcionario__name').filter(is_pago=True).annotate(qtd=Count('funcionario__name')).order_by('-qtd')),
                 'agendamentos_sexo': list(salao.models.Agendamento.objects.values('cliente__sexo').filter(is_pago=True).annotate(qtd=Count('cliente__sexo')).order_by('-qtd')),
                 'agendamentos_faixa_etaria': list(salao.models.Agendamento.objects.values('cliente__birth').filter(is_pago=True).annotate(qtd=Count('cliente__birth')).order_by('-qtd')),
@@ -579,9 +579,9 @@ class RelatorioAgendamentos(View):
         if not self.request.user.is_staff:
             return HttpResponseRedirect(reverse("salao.agendamento"))
 
-        template_name = 'salao/relatorio_agendamento.html'
+        template_name = 'salao/relatorio_agendamentos.html'
         context = {
-            'dados': list(salaoecia.accounts.models.User.objects.values('nome', 'sexo', 'email', 'birth', 'telefone').order_by('nome'))
+            'dados': list(salaoecia.accounts.models.User.objects.values('name', 'sexo', 'email', 'birth', 'telefone').order_by('name'))
         }
         return render(self.request, template_name, context=context)
 

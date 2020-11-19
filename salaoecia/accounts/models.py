@@ -67,14 +67,16 @@ class User(AbstractBaseUser, PermissionsMixin):
 
                                   )
 
-    sexo = models.CharField(max_length=1, blank=True, null=True)
+    sexo = models.CharField('Sexo', max_length=1, default='M', null=True, choices=(
+        ('M', 'Masculino'),
+        ('F', 'Feminino'),
+        ('O', 'Outro'),)
+                            )
     cpf = models.CharField(max_length=20, blank=True, null=True)
 
     telefone = models.CharField(max_length=200, blank=True, null=True)
     tipo_telefone = models.CharField(max_length=15, blank=True, null=True)
     confirmacao_agendamentos = models.IntegerField(null=True, blank=True)
-
-
 
     objects = UserManager()
 

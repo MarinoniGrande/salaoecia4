@@ -47,8 +47,13 @@ class RegisterForm(forms.ModelForm):
     neighborhood = forms.CharField(label='Bairro')
     zip_code = forms.CharField(label='CEP')
     city = forms.CharField(label='Cidade')
-    #fx_salario = forms.CharField(label='Fx')
-    #state = forms.ChoiceField(label='Estado')
+    sexo = forms.ChoiceField(label='Sexo', choices=(
+        ('M', 'Masculino'),
+        ('F', 'Feminino'),
+        ('O', 'Outro'),))
+
+    # fx_salario = forms.CharField(label='Fx')
+    # state = forms.ChoiceField(label='Estado')
 
     def clean_birth(self):
         data = self.data['birth']
@@ -74,7 +79,7 @@ class RegisterForm(forms.ModelForm):
         user.neighborhood = self.cleaned_data.get("neighborhood")
         user.zip_code = self.cleaned_data.get("zip_code")
         user.city = self.cleaned_data.get("city")
-        #user.state = self.cleaned_data.get("state")
+        user.sexo = self.cleaned_data.get("sexo")
 
         if commit:
             user.save()
@@ -82,7 +87,7 @@ class RegisterForm(forms.ModelForm):
 
     class Meta:
         model = User
-        fields = ['username', 'email', 'name', 'birth', 'address', 'number', 'complement', 'neighborhood', 'zip_code', 'city', 'state']
+        fields = ['username', 'email', 'name', 'birth', 'address', 'number', 'complement', 'neighborhood', 'zip_code', 'city', 'state', 'sexo']
 
 
 class EditAccountForm(forms.ModelForm):
@@ -94,9 +99,10 @@ class EditAccountForm(forms.ModelForm):
     neighborhood = forms.CharField(label='Bairro')
     zip_code = forms.CharField(label='CEP')
     city = forms.CharField(label='Cidade')
-    #fx_salario = forms.ChoiceField(label='Fx')
+    sexo = forms.ChoiceField(label='Sexo')
+
+    # fx_salario = forms.ChoiceField(label='Fx')
 
     class Meta:
         model = User
-        fields = ['name', 'birth', 'email', 'name', 'address', 'number', 'complement', 'neighborhood', 'zip_code', 'city', 'fx_salario', 'state']
-
+        fields = ['name', 'birth', 'email', 'name', 'address', 'number', 'complement', 'neighborhood', 'zip_code', 'city', 'fx_salario', 'state', 'sexo']

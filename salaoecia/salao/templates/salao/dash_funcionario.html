@@ -254,7 +254,7 @@
         function diasNoMes(mes, ano) {var data = new Date(ano, mes+1, 0);return data.getDate();}
         var hoje=new Date(),mes=hoje.getMonth(),ano=hoje.getFullYear(),array_dias=[],array_valores=[];
         for(var i=1; i<diasNoMes(mes, ano)+1;i++){array_dias.push(i);}
-        for(var c=0; c<array_dias.length; c++){function filtreDias(value){if(value === c){return value;}}var dados_retornados = data.filter(filtreDias);array_valores.push(dados_retornados.length);}
+        for(var c=0; c<array_dias.length; c++){function filtreDias(value){if(value === c + 1){return value;}}var dados_retornados = data.filter(filtreDias);array_valores.push(dados_retornados.length);}
         option = {
             title: [{
                 text: 'Agendamentos por Dia:'
