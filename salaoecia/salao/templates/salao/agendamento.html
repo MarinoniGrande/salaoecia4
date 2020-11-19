@@ -86,12 +86,131 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" tabindex="-1" role="dialog" id="editar_agendamento" aria-hidden="true">
+        <div class="modal-dialog modal-lg" role="document">
+            <div class="modal-content">
+                <div class="modal-header p-2">
+                    <h6 class="modal-title font-weight-bold">Edição de Agendamento:</h6>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form method="POST" id="form-edicao" action="{% url 'salao.gerenciar.agendamento' %}">
+                        {% csrf_token %}
+                        <div class="row mb-3 mt-2">
+                            <div class="col-12">
+                                <input type="hidden" value="" id="id-agendamento-input" name="id-agendamento-input" autocomplete="off" required>
+                                <span class="font-weight-bold {% if erro and descricao == 'dia' %}text-danger{% endif %}">ID:</span> <span id="id-agendamento-selecionado"></span>
+                            </div>
+                            <div class="col-12 col-xl col-lg col-md-12 col-sm-12 mt-3">
+                                <span class="font-weight-bold {% if erro and descricao == 'dia' %}text-danger{% endif %}">Data:</span>
+                                <input data-toggle="tooltip" data-placement="top" data-title="Data de início" autocomplete="off" type="date" name="data-agendamento-selecionado" id="data-agendamento-selecionado" value=""
+                                       class="form-control text-center" required>
+                            </div>
+                            <div class="col-12 col-xl col-lg col-md-12 col-sm-12 mt-3">
+                                <fieldset>
+                                    <span class="font-weight-bold {% if erro and descricao == 'horario' %}text-danger{% endif %}">Horário:</span>
+                                    <select id="horarios-agendamento" required name="horarios-agendamento" class="form-control" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione seu horário</option>
+                                        {% for h in horarios %}
+                                            <option value="{{ h.id }}" {% if erro and horario_selecionado == h.id|slugify %}selected=""{% endif %}>{{ h.hora }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </fieldset>
+                            </div>
+                            <div class="col-12 col-xl-12 col-lg-12 col-md-12 col-sm-12 mt-3">
+                                <fieldset>
+                                    <span  class="font-weight-bold {% if erro and descricao == 'servicos' %}text-danger{% endif %}">Serviços:</span>
+                                    <select id="servicos-agendamento" required multiple name="servicos-agendamento" class="form-control" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione seu atendimento</option>
+                                        {% for s in servicos %}
+                                            <option value="{{ s.id }}" {% if erro and s.id|slugify in servicos_selecionados %}selected=""{% endif %}>{{ s.nome }} - R$ {{ s.valor }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </fieldset>
+                            </div>
+                            <div class="col-12 col-xl col-lg col-md-12 col-sm-12 mt-3">
+                                <fieldset>
+                                    <span  class="font-weight-bold {% if erro and descricao == 'funcionario' %}text-danger{% endif %}">Profissional:</span>
+                                    <select id="profissional-agendamento" required name="profissional-agendamento" class="form-control" autocomplete="off">
+                                        <option value="0" disabled selected>Selecione ou deixe conosco</option>
+                                        {% for funcionario in funcionarios %}
+                                            <option value="{{ funcionario.id }}" {% if erro and funcionario_selecionado == funcionario.id|slugify %}selected=""{% endif %}>{{ funcionario.name }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </fieldset>
+                            </div>
+                            <div class="col-12 col-xl-6 col-lg-6 col-md-12 col-sm-12 mt-3">
+                                <fieldset>
+                                    <span  class="font-weight-bold ">Motivo:</span>
+                                    <select id="motivos-agendamento" required name="motivos-agendamento" class="form-control" autocomplete="off">
+                                        <option value="0" disabled selected>Motivo de cancelar/reagendar</option>
+                                        {% for motivo in motivos %}
+                                            <option value="{{ motivo.id }}">{{ motivo.nome }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </fieldset>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <a class="text-danger small mr-2" onclick="cancelar_agendamento()">
+                        Cancelar agendamento
+                    </a>
+                    <button class="btn btn-primary" type="submit" form="form-edicao" >
+                        Reagendar
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <div class="row mt-3">
         <div class="col">
             {% include 'parciais/_pagination.html' %}
         </div>
     </div>
     <script>
+        function pegar_agendamento(agendamento_id) {
+
+            console.log(agendamento_id)
+
+            $.ajax({
+                type: "POST",
+                url: "{% url 'salao.pegar.agendamento' %}",
+                dataType: "json",
+                data: {
+                    'agendamento_id': agendamento_id,
+                    'csrfmiddlewaretoken': '{{ csrf_token }}',
+                },
+                success: function (data) {
+                    $('#id-agendamento-input').val(data.agendamento.id);
+                    $('#id-agendamento-selecionado').html(data.agendamento.id);
+                    $("#horarios-agendamento option[value='" + data.agendamento.horario_id + "']").prop("selected", true);
+                    $("#profissional-agendamento option[value='" + data.agendamento.funcionario_id + "']").prop("selected", true);
+                    $('#data-agendamento-selecionado').val(data.agendamento.data);
+                    for (let s of data.servicos) {
+                        $("#servicos-agendamento option[value='" + s.servico_id + "']").prop("selected", true);
+                    }
+                    $('#servicos-agendamento').select2({
+                        theme: "bootstrap"
+                    });
+
+                    $('#editar_agendamento').modal('show');
+
+                },
+                error: function (data) {
+                    alert('Houve um erro na hora de trazer os agendamentos, por favor contacte um administrador do sistema!')
+                }
+            });
+        }
+
+
+
+
+
         $(document).ready(function () {
             $('#servicos-agendamento').select2({
                 theme: "bootstrap"
@@ -160,6 +279,7 @@
                     });
                 },
                 eventClick: function (event) {
+                    pegar_agendamento(event.event.id)
                 }
             });
             calendar.render();
