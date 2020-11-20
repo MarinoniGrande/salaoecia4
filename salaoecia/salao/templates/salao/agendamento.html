@@ -53,8 +53,8 @@
                         <div class="row mb-5">
                             <div class="col-12">
                                 <fieldset class="col-xl col-lg col-md-12 col-sm-12 text-center">
-                                    <label for="servicos-agendamento" class="font-weight-bold {% if erro and descricao == 'servicos' %}text-danger{% endif %}">Serviços:</label>
-                                    <select id="servicos-agendamento" required multiple name="servicos-agendamento" class="form-control">
+                                    <label for="servicos-agendamentos" class="font-weight-bold {% if erro and descricao == 'servicos' %}text-danger{% endif %}">Serviços:</label>
+                                    <select id="servicos-agendamentos" required multiple name="servicos-agendamento" class="form-control">
                                         <option value="0" disabled selected>Selecione seu atendimento</option>
                                         {% for s in servicos %}
                                             <option value="{{ s.id }}" {% if erro and s.id|slugify in servicos_selecionados %}selected=""{% endif %}>{{ s.nome }} - R$ {{ s.valor }}   </option>
@@ -173,9 +173,8 @@
         </div>
     </div>
     <script>
-        function pegar_agendamento(agendamento_id) {
 
-            console.log(agendamento_id)
+        function pegar_agendamento(agendamento_id) {
 
             $.ajax({
                 type: "POST",
@@ -236,14 +235,14 @@
         }
 
 
-
-
         $(document).ready(function () {
-            $('#servicos-agendamento').select2({
-                theme: "bootstrap"
-            });
-        })
-        $(document).ready(function () {
+             $('#servicos-agendamento').select2({
+            theme: "bootstrap"
+        });
+        $('#servicos-agendamentos').select2({
+            theme: "bootstrap"
+        });
+
             var calendar = $('#calendar')[0];
             calendar = new FullCalendar.Calendar(calendar, {
                 locale: "pt-br",
