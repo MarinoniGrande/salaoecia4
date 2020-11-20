@@ -75,7 +75,7 @@ class AgendamentoView(View):
         funcionarios = salaoecia.accounts.models.User.objects.all().filter(is_staff=True).order_by('name')
         servicos = salaoecia.salao.models.Servicos.objects.all().filter(status=True).order_by('nome')
         horarios = salaoecia.salao.models.Horario.objects.all().filter(status=True).order_by('hora_int')
-        todos_agendamentos = salaoecia.salao.models.Agendamento.objects.all().filter(status=True)
+        todos_agendamentos = salaoecia.salao.models.Agendamento.objects.all().filter(status=True).filter(cliente_id=self.request.user.id)
         context = {
             'erro': erro,
             'descricao': descricao,
