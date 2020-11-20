@@ -148,7 +148,6 @@
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
                 },
                 success: function (data) {
-                    console.log(data)
                     $('#tabela_agendamentos').html(data)
                 },
                 error: function (data) {
@@ -167,7 +166,6 @@
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
                 },
                 success: function (data) {
-
                     $('#id-agendamento-input').val(data.agendamento.id);
                     $('#id-agendamento-selecionado').html(data.agendamento.id);
                     $("#horarios-agendamento option[value='" + data.agendamento.horario_id + "']").prop("selected", true);
