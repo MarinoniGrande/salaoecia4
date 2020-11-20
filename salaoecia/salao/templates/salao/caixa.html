@@ -138,6 +138,8 @@
                                     </div>
                                     <div class="col">
                                         <h2>R$ <span id="valor_geral">0.00</span></h2>
+                                        <input type="hidden" value="0" id="valor_servicos">
+                                        <input type="hidden" value="0" id="valor_produtos">
                                         <input type="hidden" value="0" id="valor_geral_float">
                                     </div>
                                 </div>
@@ -171,7 +173,7 @@
                         {% if caixa.is_caixa_aberto %}
                             <a class="btn btn-danger text-white mr-2" style="cursor:pointer" onclick="abrir_caixa()">Fechar caixa</a>
                         {% else %}
-                            <a class="btn btn-primary mr-2" onclick="abrir_caixa()">Abrir caixa</a>
+                            <a class="btn btn-primary mr-2 text-white" onclick="abrir_caixa()">Abrir caixa</a>
                         {% endif %}
                     {% endif %}
                     <button class="btn btn-primary" onclick="finalizar_compra()">Finalizar compra</button>
@@ -186,6 +188,8 @@
         $(document).ready(function () {
             $('#cpf_na_nota').val('');
             $('#valor_geral').html('0.00');
+            $('#valor_servicos').val(0);
+            $('#valor_produtos').val(0);
             $('#valor_geral_float').val(0);
             $('#valor_troco').html('0.00');
             $.ajax({
@@ -237,7 +241,7 @@
                 },
                 success: function (data) {
                     let html_final = ``;
-                    let valor_final = 0
+                    let valor_final = 0;
 
                     for (let i = 0; i < data.itens.length; i++) {
                         valor_final += parseFloat(data.itens[i].servico__valor);
@@ -248,10 +252,10 @@
                             </tr>
                         `
                     }
-                    let valor_atual = parseFloat($('#valor_geral_float ').val());
+                    $("#valor_servicos").val(valor_final);
 
-                    $('#valor_geral').html(valor_final + valor_atual)
-                    $('#valor_geral_float').val(valor_final + valor_atual)
+                    calcular_total();
+
                     if (data.cliente.cpf !== null) {
                         $('#cpf_na_nota').val(data.cliente.cpf)
                     }
@@ -273,6 +277,17 @@
             calcular_troco()
         });
 
+        function calcular_total(){
+            var valor_servicos = parseFloat($('#valor_servicos').val());
+            var valor_produtos = parseFloat($("#valor_produtos").val());
+
+            $("#valor_geral_float").val(valor_servicos + valor_produtos);
+
+            $("#valor_geral").html(valor_servicos + valor_produtos);
+
+            calcular_troco();
+        }
+
         function calcular_troco() {
             let valor_recebido = 0;
             if ($('#valor_recebido').val()) {
@@ -281,7 +296,7 @@
                 valor_recebido = 0
             }
             let valor = (valor_recebido - parseFloat($('#valor_geral_float ').val())).toFixed(2) && (valor_recebido - parseFloat($('#valor_geral_float ').val())).toFixed(2) < 0 ? 0 : (valor_recebido - parseFloat($('#valor_geral_float ').val())).toFixed(2);
-                $('#valor_troco').html(valor);
+            $('#valor_troco').html(valor);
         }
     </script>
     <script>
@@ -309,11 +324,10 @@
                                         <td><button class="btn btn-danger" onclick="remover_produto(this)">Remover</button></td>
                                     </tr>
                                 `);
+                                $("#valor_produtos").val(parseFloat($("#valor_produtos").val()) + parseFloat(data.produto.valor_revenda2));
 
-                                let valor_total = parseFloat(data.produto.valor_revenda2) + parseFloat($('#valor_geral_float ').val());
-                                $('#valor_geral').html(valor_total.toFixed(2));
-                                $('#valor_geral_float').val(valor_total);
-                                calcular_troco();
+                                calcular_total();
+
                                 produtos_adicionados.push(data.produto.id);
                             } catch (e) {
 
@@ -328,12 +342,11 @@
 
         function remover_produto(_this) {
             _this = $(_this);
-            let valor = _this.parent().parent().children()[2];
-            let valor_total = parseFloat(valor) - parseFloat($('#valor_geral_float ').val()) ? parseFloat(valor) - parseFloat($('#valor_geral_float ').val()) : 0;
-            $('#valor_geral').html(valor_total.toFixed(2));
-            $('#valor_geral_float').val(valor_total);
+            let valor = _this.parent().parent().children()[2].innerHTML;
+            $("#valor_produtos").val(parseFloat($("#valor_produtos").val()) - parseFloat(valor));
             produtos_adicionados.splice(produtos_adicionados.indexOf(parseFloat(_this.parent().parent().attr('data-id'))), 1);
-            calcular_troco();
+
+            calcular_total();
             _this.parent().parent().remove();
         }
 
@@ -364,26 +377,33 @@
             let produtos_add = produtos_adicionados;
             let cliente_id = $('#clientes').val();
             let cpf_na_nota = $('#cpf_na_nota').val();
-            $.ajax({
-                type: "POST",
-                url: "{% url 'salao.finalizar_compra' %}",
-                data: {
-                    'forma_pag': forma_pag,
-                    'vlr_total': vlr_total,
-                    'vlr_recebido': vlr_recebido,
-                    'vlr_troco': vlr_troco,
-                    'produtos_add': produtos_add,
-                    'cliente_id': cliente_id,
-                    'cpf_na_nota': cpf_na_nota,
-                    'csrfmiddlewaretoken': '{{ csrf_token }}',
-                },
-                success: function (data) {
-                    location.reload();
-                },
-                error: function (data) {
-                    alert('Erro ao finalizar a compra')
-                }
-            });
+
+            if(vlr_recebido >= vlr_total){
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'salao.finalizar_compra' %}",
+                    data: {
+                        'forma_pag': forma_pag,
+                        'vlr_total': vlr_total,
+                        'vlr_recebido': vlr_recebido,
+                        'vlr_troco': vlr_troco,
+                        'produtos_add': produtos_add,
+                        'cliente_id': cliente_id,
+                        'cpf_na_nota': cpf_na_nota,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    },
+                    success: function (data) {
+                        location.reload();
+                    },
+                    error: function (data) {
+                        alert('Erro ao finalizar a compra')
+                    }
+                });
+            }
+            else {
+                $("#valor_recebido").focus();
+                alert("Valor recebido menor que o valor total");
+            }
         }
 
     </script>
