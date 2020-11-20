@@ -206,7 +206,34 @@
                 }
             });
         }
-
+        function cancelar_agendamento() {
+            let agendamento_id = $('#id-agendamento-input').val();
+            let motivo_id = $('#motivos-agendamento').val();
+            if(agendamento_id === ''){
+                alert('Por favor selecione um agendamento!')
+            }
+            else if(motivo_id === null){
+                alert('Por favor selecione um motivo para cancelar o agendamento!')
+            }
+            else{
+                $.ajax({
+                    type: "POST",
+                    url: "{% url 'salao.cancelar.agendamento' %}",
+                    data: {
+                        'agendamento_id': agendamento_id,
+                        'motivo_id': motivo_id,
+                        'csrfmiddlewaretoken': '{{ csrf_token }}',
+                    },
+                    success: function (data) {
+                        confirm('Agendamento deletado com sucesso!');
+                        window.location.reload();
+                    },
+                    error: function (data) {
+                        alert('Houve um erro na hora de cancelar o agendamento!')
+                    }
+                });
+            }
+        }
 
 
 
