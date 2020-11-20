@@ -201,8 +201,6 @@ class AtualizarAgendamentoView(View):
 
 class PegarAgendamentoView(View):
     def post(self, *args, **kwargs):
-        if not self.request.user.is_staff:
-            return HttpResponseRedirect(reverse("salao.agendamento"))
 
         agendamento_id = self.request.POST.get('agendamento_id')
         agendamento = salaoecia.salao.models.Agendamento.objects.values('horario_id', 'funcionario_id', 'data', 'id').filter(status=True, id=agendamento_id).first()

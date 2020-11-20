@@ -180,12 +180,12 @@
             $.ajax({
                 type: "POST",
                 url: "{% url 'salao.pegar.agendamento' %}",
-                dataType: "json",
                 data: {
                     'agendamento_id': agendamento_id,
                     'csrfmiddlewaretoken': '{{ csrf_token }}',
                 },
                 success: function (data) {
+                    console.log(data)
                     $('#id-agendamento-input').val(data.agendamento.id);
                     $('#id-agendamento-selecionado').html(data.agendamento.id);
                     $("#horarios-agendamento option[value='" + data.agendamento.horario_id + "']").prop("selected", true);
